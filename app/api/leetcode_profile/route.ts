@@ -27,7 +27,7 @@ async function getCsrfToken() {
       console.log('cooked');
     }
   } catch (error) {
-    console.error('bye', error.message);
+    console.error('bye');
   }
 }
 
