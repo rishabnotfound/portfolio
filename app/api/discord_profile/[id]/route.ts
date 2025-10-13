@@ -160,8 +160,8 @@ export async function GET(
           lanyardDiscordUser = data.discord_user;
 
           // Deduplicate activities by name + type combination
-          const uniqueActivities = [];
-          const seenActivities = new Map();
+          const uniqueActivities: any[] = [];
+          const seenActivities = new Map<string, any>();
 
           for (const activity of (data.activities || [])) {
             const key = `${activity.name}-${activity.type}`;
