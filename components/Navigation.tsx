@@ -55,14 +55,16 @@ export default function Navigation() {
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? 'glass-dark backdrop-blur-lg shadow-lg'
-            : 'bg-transparent'
-        }`}
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div
+            className={`flex items-center justify-between h-16 px-6 rounded-2xl transition-all duration-300 ${
+              scrolled
+                ? 'backdrop-blur-md bg-white/5 border border-white/10 shadow-lg shadow-black/20'
+                : 'backdrop-blur-sm bg-white/0 border border-white/0'
+            }`}
+          >
             {/* Logo */}
             <motion.a
               href="#home"
