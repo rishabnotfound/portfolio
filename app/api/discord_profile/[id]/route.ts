@@ -85,7 +85,7 @@ const PREMIUM_TYPES: { [key: number]: string } = {
 
 const VALID_SNOWFLAKE_REGEX = /^\d{17,20}$/
 
-function snowflakeToDate(id) {
+function snowflakeToDate(id: string) {
     let temp = parseInt(id).toString(2);
     let length = 64 - temp.length;
 
@@ -99,7 +99,7 @@ function snowflakeToDate(id) {
     return date;
 }
 
-function checkValidSnowflake(id) {
+function checkValidSnowflake(id: string) {
     if (VALID_SNOWFLAKE_REGEX.test(id)) return id;
     else return 'Invalid Discord ID';
 }
