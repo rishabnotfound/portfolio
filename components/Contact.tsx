@@ -2,8 +2,8 @@
 
 import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Mail, Github, Send, CheckCircle, Code2, Linkedin } from 'lucide-react';
-import { contact_mail, github_username, leetcode_username, linkedin_username } from '@/config';
+import { Mail, Github, Send, CheckCircle, Code2, Linkedin, Instagram } from 'lucide-react';
+import { contact_mail, github_username, instagram_username, leetcode_username, linkedin_username } from '@/config';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -124,6 +124,22 @@ export default function Contact() {
                   <div>
                     <div className="text-sm text-gray-400">LinkedIn</div>
                     <div className="text-white font-medium">@{linkedin_username}</div>
+                  </div>
+                </motion.a>
+
+                <motion.a
+                  href={`https://instagram.com/${instagram_username}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.05, x: 10 }}
+                  className="flex items-center gap-4 glass-dark p-4 rounded-xl hover:bg-white/5 transition-all group"
+                >
+                  <div className="p-3 bg-orange-500/20 rounded-lg group-hover:bg-orange-500/30 transition-all">
+                    <Instagram className="w-6 h-6 text-orange-400" />
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-400">Instagram</div>
+                    <div className="text-white font-medium">@{instagram_username}</div>
                   </div>
                 </motion.a>
               </div>

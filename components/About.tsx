@@ -68,9 +68,11 @@ export default function About() {
                 <span className="gradient-text">About Me</span>
               </h2>
 
-              <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mb-16 leading-relaxed">
-                Full-stack developer passionate about crafting exceptional digital experiences.
-                I turn complex problems into elegant solutions using cutting-edge tech.
+              <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mb-4 leading-relaxed">
+                18-year-old full-stack developer with a passion for cryptography and open source. I&apos;ve contributed to numerous open source repositories and built multiple famous websites used by millions.
+              </p>
+              <p className="text-base sm:text-lg text-gray-400 max-w-3xl mb-16 leading-relaxed">
+                Turning complex problems into elegant solutions using cutting-edge technology.
               </p>
 
               <h3 className="text-3xl sm:text-4xl font-bold mb-12">

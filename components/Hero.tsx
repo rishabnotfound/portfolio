@@ -5,16 +5,9 @@ import { motion } from 'framer-motion';
 import { Github, Mail, Code2, ChevronDown, Award, Linkedin } from 'lucide-react';
 import Typewriter from 'typewriter-effect';
 import { contact_mail, github_username, leetcode_username, name } from '@/config';
+import ParallaxBackground from './ParallaxBackground';
 
 export default function Hero() {
-  const [Scene3DComponent, setScene3DComponent] = useState<any>(null);
-
-  useEffect(() => {
-    // Load Scene3D only on client side
-    import('./Scene3D').then((mod) => {
-      setScene3DComponent(() => mod.default);
-    });
-  }, []);
 
   const scrollToSection = (id: string) => {
     if (typeof document !== 'undefined') {
@@ -24,7 +17,7 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden" id="home">
-      {Scene3DComponent && <Scene3DComponent />}
+      <ParallaxBackground />
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -59,12 +52,21 @@ export default function Hero() {
             </h1>
 
             <motion.p
-              className="text-xl sm:text-2xl text-gray-300 mb-8 max-w-xl"
+              className="text-xl sm:text-2xl text-gray-300 mb-4 max-w-xl"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
             >
-              Full Stack Developer crafting exceptional digital experiences
+              18-year-old Full Stack Developer & Cryptography Enthusiast
+            </motion.p>
+
+            <motion.p
+              className="text-base sm:text-lg text-gray-400 mb-8 max-w-xl"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+            >
+              Contributing to open source • Building famous websites • Crafting exceptional digital experiences
             </motion.p>
 
             <motion.div

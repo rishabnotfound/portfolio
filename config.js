@@ -3,6 +3,7 @@ export const name = `Rishab`;
 export const navbar_title = `<Rishab />`
 export const github_username = `rishabnotfound`;
 export const linkedin_username = `rishabnotfound`;
+export const instagram_username = `rishabnotfound`;
 export const leetcode_username = `rishabnotfound`;
 export const contact_mail = `itzrishabboss@gmail.com`;
 export const discord_userid = `1141729666160402565`;
