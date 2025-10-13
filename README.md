@@ -66,6 +66,3 @@ MIT License - feel free to use this template for your own portfolio!
 ## Author
 
 **Rishab**
-- GitHub: [@rishabnotfound](https://github.com/rishabnotfound)
-- LeetCode: [@rishabnotfound](https://leetcode.com/rishabnotfound)
-- Email: itzrishabboss@gmail.com

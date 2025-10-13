@@ -1,17 +1,19 @@
 import { NextResponse } from 'next/server';
+import { github_username } from '@/config';
+
+const api_github = `https://api.github.com`
 
 export async function GET() {
   try {
-    const username = 'rishabnotfound';
+    const username = github_username;
 
-    // Fetch user's repositories
     const reposResponse = await fetch(
-      `https://api.github.com/users/${username}/repos?sort=updated&per_page=100`,
+      `${api_github}/users/${username}/repos?sort=updated&per_page=100`,
       {
         headers: {
           'Accept': 'application/vnd.github.v3+json',
         },
-        next: { revalidate: 3600 } // Cache for 1 hour
+        next: { revalidate: 3600 } 
       }
     );
 
@@ -21,7 +23,6 @@ export async function GET() {
 
     const repos = await reposResponse.json();
 
-    // Filter and format repositories
     const formattedRepos = repos
       .filter((repo: any) => !repo.fork && !repo.archived)
       .map((repo: any) => ({
@@ -38,7 +39,7 @@ export async function GET() {
         updated_at: repo.updated_at,
       }))
       .sort((a: any, b: any) => b.stars - a.stars)
-      .slice(0, 6); // Get top 6 repos
+      .slice(0, 6);
 
     return NextResponse.json(formattedRepos);
   } catch (error) {

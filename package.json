@@ -1,6 +1,7 @@
 {
   "name": "portfolio",
-  "version": "0.1.0",
+  "author": "rishabnotfound",
+  "version": "1.67.67",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -12,6 +13,7 @@
     "@react-three/drei": "^9.114.3",
     "@react-three/fiber": "^8.17.10",
     "axios": "^1.7.7",
+    "bufferutil": "^4.0.9",
     "framer-motion": "^11.11.11",
     "locomotive-scroll": "^5.0.0-beta.21",
     "lucide-react": "^0.454.0",
@@ -19,13 +21,16 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "three": "^0.169.0",
-    "typewriter-effect": "^2.22.0"
+    "typewriter-effect": "^2.22.0",
+    "utf-8-validate": "^6.0.5",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "@types/node": "^22.8.6",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/three": "^0.169.0",
+    "@types/ws": "^8.18.1",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.13.0",
     "eslint-config-next": "^15.0.0",

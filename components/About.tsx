@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
 import DynamicStats from './DynamicStats';
+import DiscordProfile from './DiscordProfile';
 
 const skills = [
   { name: 'Next.js', badge: 'https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white' },
@@ -60,48 +61,58 @@ export default function About() {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-5xl sm:text-6xl font-bold text-center mb-6">
-            <span className="gradient-text">About Me</span>
-          </h2>
+          <div className="grid lg:grid-cols-[1fr,400px] gap-8 items-start">
+            {/* Left Content */}
+            <div>
+              <h2 className="text-5xl sm:text-6xl font-bold mb-6">
+                <span className="gradient-text">About Me</span>
+              </h2>
 
-          <p className="text-lg sm:text-xl text-gray-300 text-center max-w-3xl mx-auto mb-16 leading-relaxed">
-            Full-stack developer passionate about crafting exceptional digital experiences.
-            I turn complex problems into elegant solutions using cutting-edge tech.
-          </p>
+              <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mb-16 leading-relaxed">
+                Full-stack developer passionate about crafting exceptional digital experiences.
+                I turn complex problems into elegant solutions using cutting-edge tech.
+              </p>
 
-          <h3 className="text-3xl sm:text-4xl font-bold text-center mb-12">
-            <span className="text-white">Tech Stack</span>
-          </h3>
+              <h3 className="text-3xl sm:text-4xl font-bold mb-12">
+                <span className="text-white">Tech Stack</span>
+              </h3>
 
-          <motion.div
-            variants={container}
-            initial="hidden"
-            animate={isInView ? 'show' : 'hidden'}
-            className="flex flex-wrap justify-center gap-3 max-w-5xl mx-auto mb-16"
-          >
-            {skills.map((skill) => (
               <motion.div
-                key={skill.name}
-                variants={item}
-                whileHover={{ scale: 1.05, y: -2 }}
-                className="transition-all"
+                variants={container}
+                initial="hidden"
+                animate={isInView ? 'show' : 'hidden'}
+                className="flex flex-wrap gap-3 max-w-5xl mb-16"
               >
-                <img
-                  src={skill.badge}
-                  alt={skill.name}
-                  className="h-8 hover:shadow-lg hover:shadow-blue-500/20 transition-shadow"
-                />
+                {skills.map((skill) => (
+                  <motion.div
+                    key={skill.name}
+                    variants={item}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    className="transition-all"
+                  >
+                    <img
+                      src={skill.badge}
+                      alt={skill.name}
+                      className="h-8 hover:shadow-lg hover:shadow-blue-500/20 transition-shadow"
+                    />
+                  </motion.div>
+                ))}
               </motion.div>
-            ))}
-          </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-          >
-            <DynamicStats />
-          </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+              >
+                <DynamicStats />
+              </motion.div>
+            </div>
+
+            {/* Right Content - Discord Profile */}
+            <div className="lg:sticky lg:top-24">
+              <DiscordProfile />
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

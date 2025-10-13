@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Github, Mail, Code2, ChevronDown, Award } from 'lucide-react';
+import { Github, Mail, Code2, ChevronDown, Award, Linkedin } from 'lucide-react';
 import Typewriter from 'typewriter-effect';
+import { contact_mail, github_username, leetcode_username, name } from '@/config';
 
 export default function Hero() {
   const [Scene3DComponent, setScene3DComponent] = useState<any>(null);
@@ -47,7 +48,7 @@ export default function Hero() {
               <span className="gradient-text inline-block">
                 <Typewriter
                   options={{
-                    strings: ['Rishab'],
+                    strings: [name],
                     autoStart: true,
                     loop: true,
                     deleteSpeed: 50,
@@ -73,7 +74,7 @@ export default function Hero() {
               transition={{ duration: 0.8, delay: 0.7 }}
             >
               <a
-                href="https://github.com/rishabnotfound"
+                href={`https://github.com/${github_username}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glass p-3 rounded-full hover:bg-blue-500/20 transition-all neon-glow group"
@@ -81,7 +82,15 @@ export default function Hero() {
                 <Github className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </a>
               <a
-                href="https://leetcode.com/rishabnotfound"
+                href={`https://linkedin.com/in/${leetcode_username}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="glass p-3 rounded-full hover:bg-yellow-500/20 transition-all neon-glow group"
+              >
+                <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              </a>
+              <a
+                href={`https://leetcode.com/${leetcode_username}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glass p-3 rounded-full hover:bg-yellow-500/20 transition-all neon-glow group"
@@ -89,7 +98,7 @@ export default function Hero() {
                 <Award className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </a>
               <a
-                href="mailto:itzrishabboss@gmail.com"
+                href={`mailto:${contact_mail}`}
                 className="glass p-3 rounded-full hover:bg-pink-500/20 transition-all neon-glow group"
               >
                 <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />

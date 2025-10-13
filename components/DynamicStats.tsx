@@ -2,12 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Github, Award, Code, Trophy, Target } from 'lucide-react';
+import { Github, Award, Code, Users, Star } from 'lucide-react';
+import { github_username } from '@/config';
+
+const github_api = `https://api.github.com`;
 
 interface GitHubStats {
   totalRepos: number;
   totalStars: number;
   totalForks: number;
+  followers: number;
 }
 
 interface LeetCodeStats {
@@ -17,7 +21,7 @@ interface LeetCodeStats {
 }
 
 export default function DynamicStats() {
-  const [githubStats, setGithubStats] = useState<GitHubStats>({ totalRepos: 0, totalStars: 0, totalForks: 0 });
+  const [githubStats, setGithubStats] = useState<GitHubStats>({ totalRepos: 0, totalStars: 0, totalForks: 0, followers: 0 });
   const [leetcodeStats, setLeetcodeStats] = useState<LeetCodeStats>({ ranking: 0, totalSolved: 0, reputation: 0 });
   const [loading, setLoading] = useState(true);
 
@@ -25,15 +29,16 @@ export default function DynamicStats() {
     // Fetch GitHub stats
     Promise.all([
       fetch('/api/github').then(res => res.json()),
-      fetch('/api/leetcode_profile').then(res => res.json())
+      fetch('/api/leetcode_profile').then(res => res.json()),
+      fetch(`${github_api}/users/${github_username}`).then(res => res.json())
     ])
-      .then(([githubData, leetcodeData]) => {
+      .then(([githubData, leetcodeData, userData]) => {
         // Calculate GitHub stats
         const totalStars = githubData.reduce((sum: number, repo: any) => sum + (repo.stars || 0), 0);
         const totalForks = githubData.reduce((sum: number, repo: any) => sum + (repo.forks || 0), 0);
 
         // Fetch all repos for accurate count
-        fetch('https://api.github.com/users/rishabnotfound/repos?per_page=100')
+        fetch(`${github_api}/users/${github_username}/repos?per_page=100`)
           .then(res => res.json())
           .then(allRepos => {
             const nonForkedRepos = allRepos.filter((repo: any) => !repo.fork && !repo.archived);
@@ -41,7 +46,8 @@ export default function DynamicStats() {
             setGithubStats({
               totalRepos: nonForkedRepos.length,
               totalStars,
-              totalForks
+              totalForks,
+              followers: userData.followers || 0
             });
           });
 
@@ -60,6 +66,13 @@ export default function DynamicStats() {
 
   const stats = [
     {
+      icon: Users,
+      label: 'GitHub Followers',
+      value: loading ? '...' : githubStats.followers,
+      color: 'from-purple-500 to-pink-500',
+      borderColor: 'border-purple-500/30'
+    },
+    {
       icon: Github,
       label: 'GitHub Projects',
       value: loading ? '...' : githubStats.totalRepos,
@@ -67,7 +80,7 @@ export default function DynamicStats() {
       borderColor: 'border-blue-500/30'
     },
     {
-      icon: Target,
+      icon: Star,
       label: 'Total Stars',
       value: loading ? '...' : githubStats.totalStars,
       color: 'from-yellow-500 to-orange-500',
@@ -86,13 +99,6 @@ export default function DynamicStats() {
       value: loading ? '...' : leetcodeStats.totalSolved,
       color: 'from-green-500 to-emerald-500',
       borderColor: 'border-green-500/30'
-    },
-    {
-      icon: Trophy,
-      label: 'LeetCode Rep',
-      value: loading ? '...' : leetcodeStats.reputation,
-      color: 'from-orange-500 to-red-500',
-      borderColor: 'border-orange-500/30'
     },
   ];
 
@@ -113,13 +119,7 @@ export default function DynamicStats() {
 
           <div className="relative z-10">
             <div className="flex justify-center mb-3">
-              <div className={`p-3 rounded-full bg-gradient-to-br ${stat.color} bg-opacity-10`}>
-                <stat.icon className={`w-6 h-6 bg-gradient-to-br ${stat.color} bg-clip-text text-transparent`} style={{
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundImage: `linear-gradient(to bottom right, var(--tw-gradient-stops))`
-                }} />
-              </div>
+              <stat.icon className="w-8 h-8 text-gray-300" strokeWidth={1.5} />
             </div>
 
             <div className="text-3xl sm:text-4xl font-bold gradient-text mb-2">

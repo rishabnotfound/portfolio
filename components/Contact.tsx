@@ -2,7 +2,8 @@
 
 import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Mail, Github, Send, CheckCircle, Code2 } from 'lucide-react';
+import { Mail, Github, Send, CheckCircle, Code2, Linkedin } from 'lucide-react';
+import { contact_mail, github_username, leetcode_username, linkedin_username } from '@/config';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -79,7 +80,7 @@ export default function Contact() {
 
               <div className="space-y-6">
                 <motion.a
-                  href="mailto:itzrishabboss@gmail.com"
+                  href={`mailto:${contact_mail}`}
                   whileHover={{ scale: 1.05, x: 10 }}
                   className="flex items-center gap-4 glass-dark p-4 rounded-xl hover:bg-white/5 transition-all group"
                 >
@@ -89,13 +90,13 @@ export default function Contact() {
                   <div>
                     <div className="text-sm text-gray-400">Email</div>
                     <div className="text-white font-medium">
-                      itzrishabboss@gmail.com
+                      {contact_mail}
                     </div>
                   </div>
                 </motion.a>
 
                 <motion.a
-                  href="https://github.com/rishabnotfound"
+                  href={`https://github.com/${github_username}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05, x: 10 }}
@@ -106,23 +107,23 @@ export default function Contact() {
                   </div>
                   <div>
                     <div className="text-sm text-gray-400">GitHub</div>
-                    <div className="text-white font-medium">@rishabnotfound</div>
+                    <div className="text-white font-medium">@{github_username}</div>
                   </div>
                 </motion.a>
 
                 <motion.a
-                  href="https://leetcode.com/rishabnotfound"
+                  href={`https://linkedin.com/in/${linkedin_username}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.05, x: 10 }}
                   className="flex items-center gap-4 glass-dark p-4 rounded-xl hover:bg-white/5 transition-all group"
                 >
                   <div className="p-3 bg-pink-500/20 rounded-lg group-hover:bg-pink-500/30 transition-all">
-                    <Code2 className="w-6 h-6 text-pink-400" />
+                    <Linkedin className="w-6 h-6 text-pink-400" />
                   </div>
                   <div>
-                    <div className="text-sm text-gray-400">LeetCode</div>
-                    <div className="text-white font-medium">@rishabnotfound</div>
+                    <div className="text-sm text-gray-400">LinkedIn</div>
+                    <div className="text-white font-medium">@{linkedin_username}</div>
                   </div>
                 </motion.a>
               </div>

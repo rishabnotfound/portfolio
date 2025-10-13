@@ -6,6 +6,9 @@ import { Search, Star, GitFork, Code2, ExternalLink, Github, ArrowLeft, Calendar
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
+import { github_username } from '@/config';
+
+const api_github = `https://api.github.com`;
 
 interface Repo {
   id: number;
@@ -49,7 +52,7 @@ export default function ReposPage() {
       .then((res) => res.json())
       .then((data) => {
         // Fetch more repos
-        fetch('https://api.github.com/users/rishabnotfound/repos?per_page=100&sort=updated')
+        fetch(`${api_github}/users/${github_username}/repos?per_page=100&sort=updated`)
           .then((res) => res.json())
           .then((allRepos) => {
             const formatted = allRepos

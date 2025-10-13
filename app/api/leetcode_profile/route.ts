@@ -1,16 +1,18 @@
 import { NextResponse } from 'next/server';
+import { leetcode_username } from '@/config';
 
+const leetcode_baseurl = `https://leetcode.com`
 
-//CSFR COOKIE 
+//CSFR COOKIE NO LONGER REQUIRED  
 async function getCsrfToken() {
   try {
-    const response = await fetch('https://leetcode.com/graphql/', {
+    const response = await fetch(`${leetcode_baseurl}/graphql/`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0',
-        'Origin': 'https://leetcode.com',
-        'Referer': 'https://leetcode.com/'
+        'Origin': leetcode_baseurl,
+        'Referer': `${leetcode_baseurl}/`
       }
     });
     const setCookieHeader = response.headers.get('set-cookie');
@@ -19,7 +21,7 @@ async function getCsrfToken() {
       const csrfCookie = cookies.find(cookie => cookie.includes('csrftoken='));
       if (csrfCookie) {
         const csrfToken = csrfCookie.split(';')[0];
-        console.log(csrfToken);
+        return csrfToken
       } else {
         console.log('fucked up');
       }
@@ -62,18 +64,18 @@ export async function GET() {
       }
     `;
 
-    const response = await fetch('https://leetcode.com/graphql/', {
+    const response = await fetch(`${leetcode_baseurl}/graphql/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:141.0) Gecko/20100101 Firefox/141.0',
-        'Origin': 'https://leetcode.com',
-        'Referer': 'https://leetcode.com/',
+        'Origin': leetcode_baseurl,
+        'Referer': `${leetcode_baseurl}/`,
       },
       body: JSON.stringify({
         query,
         variables: {
-          username: 'rishabnotfound',
+          username: leetcode_username,
         },
       }),
     });
@@ -90,7 +92,6 @@ export async function GET() {
 
     const user = data.data.matchedUser;
 
-    // Calculate total problems solved
     let totalSolved = 0;
     let easy = 0;
     let medium = 0;

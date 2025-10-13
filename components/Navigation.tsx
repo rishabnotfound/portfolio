@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, Home, User, Briefcase, Mail } from 'lucide-react';
+import { navbar_title } from '@/config';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +27,7 @@ export default function Navigation() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <a href="#home" className="text-2xl font-bold gradient-text">
-              {'<Rishab />'}
+              {navbar_title}
             </a>
           </div>
         </div>
@@ -73,7 +74,7 @@ export default function Navigation() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {'<Rishab />'}
+              {navbar_title}
             </motion.a>
 
             {/* Desktop Navigation */}
