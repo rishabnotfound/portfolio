@@ -40,6 +40,8 @@ const languageColors: { [key: string]: string } = {
   'C++': '#f34b7d',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default function ReposPage() {
   const [repos, setRepos] = useState<Repo[]>([]);
   const [filteredRepos, setFilteredRepos] = useState<Repo[]>([]);

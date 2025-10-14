@@ -84,8 +84,8 @@ export default function Contact() {
                   whileHover={{ scale: 1.05, x: 10 }}
                   className="flex items-center gap-4 glass-dark p-4 rounded-xl hover:bg-white/5 transition-all group"
                 >
-                  <div className="p-3 bg-blue-500/20 rounded-lg group-hover:bg-blue-500/30 transition-all">
-                    <Mail className="w-6 h-6 text-blue-400" />
+                  <div className="p-3 bg-red-500/20 rounded-lg group-hover:bg-red-500/30 transition-all">
+                    <Mail className="w-6 h-6 text-red-400" />
                   </div>
                   <div>
                     <div className="text-sm text-gray-400">Email</div>
@@ -102,8 +102,8 @@ export default function Contact() {
                   whileHover={{ scale: 1.05, x: 10 }}
                   className="flex items-center gap-4 glass-dark p-4 rounded-xl hover:bg-white/5 transition-all group"
                 >
-                  <div className="p-3 bg-purple-500/20 rounded-lg group-hover:bg-purple-500/30 transition-all">
-                    <Github className="w-6 h-6 text-purple-400" />
+                  <div className="p-3 bg-red-600/20 rounded-lg group-hover:bg-red-600/30 transition-all">
+                    <Github className="w-6 h-6 text-red-400" />
                   </div>
                   <div>
                     <div className="text-sm text-gray-400">GitHub</div>
@@ -152,7 +152,7 @@ export default function Contact() {
                 transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
                 className="hidden lg:block w-64 h-64 relative"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full blur-3xl opacity-20" />
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 rounded-full blur-3xl opacity-20" />
               </motion.div>
             </motion.div>
 
@@ -177,7 +177,7 @@ export default function Contact() {
                     value={formData.name}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 glass-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-white placeholder-gray-500"
+                    className="w-full px-4 py-3 glass-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-white placeholder-gray-500"
                     placeholder="Your name"
                   />
                 </div>
@@ -196,7 +196,7 @@ export default function Contact() {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 glass-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-white placeholder-gray-500"
+                    className="w-full px-4 py-3 glass-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-white placeholder-gray-500"
                     placeholder="your.email@example.com"
                   />
                 </div>
@@ -228,7 +228,7 @@ export default function Contact() {
                   className={`w-full py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all ${
                     status === 'sent'
                       ? 'bg-green-500 hover:bg-green-600'
-                      : 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600'
+                      : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
                   } disabled:opacity-50 disabled:cursor-not-allowed neon-glow`}
                 >
                   {status === 'idle' && (

@@ -85,7 +85,7 @@ export default function Projects() {
 
           {loading ? (
             <div className="flex justify-center items-center min-h-[400px]">
-              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+              <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-red-500"></div>
             </div>
           ) : (
             <motion.div
@@ -99,16 +99,16 @@ export default function Projects() {
                   key={repo.id}
                   variants={item}
                   whileHover={{ y: -8, scale: 1.02 }}
-                  className="glass-dark rounded-2xl p-6 hover:bg-white/5 transition-all group relative overflow-hidden border border-white/5 hover:border-blue-500/30"
+                  className="glass-dark rounded-2xl p-6 hover:bg-white/5 transition-all group relative overflow-hidden border border-white/5 hover:border-red-500/30"
                 >
                   {/* Gradient background on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-red-600/5 to-red-700/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                   <div className="relative z-10">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <Code2 className="w-5 h-5 text-blue-400 flex-shrink-0" />
-                        <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors truncate">
+                        <Code2 className="w-5 h-5 text-red-400 flex-shrink-0" />
+                        <h3 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors truncate">
                           {repo.name}
                         </h3>
                       </div>
@@ -124,7 +124,7 @@ export default function Projects() {
                         {repo.topics.slice(0, 3).map((topic) => (
                           <span
                             key={topic}
-                            className="px-2.5 py-1 text-xs rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20"
+                            className="px-2.5 py-1 text-xs rounded-full bg-red-500/10 text-red-300 border border-red-500/20"
                           >
                             {topic}
                           </span>
@@ -167,7 +167,7 @@ export default function Projects() {
                         href={repo.html_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg text-sm font-medium transition-all flex-1 border border-blue-500/20 group/btn"
+                        className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-sm font-medium transition-all flex-1 border border-red-500/20 group/btn"
                       >
                         <Github className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
                         <span>Code</span>
@@ -177,7 +177,7 @@ export default function Projects() {
                           href={repo.homepage}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-purple-500/10 hover:bg-purple-500/20 rounded-lg text-sm font-medium transition-all border border-purple-500/20 group/btn"
+                          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600/10 hover:bg-red-600/20 rounded-lg text-sm font-medium transition-all border border-red-600/20 group/btn"
                         >
                           <ExternalLink className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
                           <span className="hidden sm:inline">Live</span>
@@ -199,7 +199,7 @@ export default function Projects() {
           >
             <Link
               href="/repos"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full font-semibold hover:scale-105 transition-all neon-glow group"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-red-500 to-red-600 rounded-full font-semibold hover:scale-105 transition-all neon-glow group"
             >
               <span>View More</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

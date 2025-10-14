@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Github, Mail, Code2, ChevronDown, Award, Linkedin } from 'lucide-react';
+import { Github, Mail, Code2, ChevronDown, Instagram, Linkedin } from 'lucide-react';
 import Typewriter from 'typewriter-effect';
-import { contact_mail, github_username, leetcode_username, name } from '@/config';
+import { contact_mail, github_username, instagram_username, leetcode_username, name } from '@/config';
 import ParallaxBackground from './ParallaxBackground';
 
 export default function Hero() {
@@ -34,7 +34,7 @@ export default function Hero() {
               transition={{ duration: 0.6 }}
               className="mb-4"
             >
-              <span className="text-gray-400 text-lg sm:text-xl">Hi, I&apos;m</span>
+              <span className="text-gray-700 text-lg sm:text-xl">Hey, I&apos;m</span>
             </motion.div>
 
             <h1 className="text-6xl sm:text-7xl lg:text-8xl font-bold mb-6">
@@ -60,14 +60,16 @@ export default function Hero() {
               18-year-old Full Stack Developer & Cryptography Enthusiast
             </motion.p>
 
-            <motion.p
-              className="text-base sm:text-lg text-gray-400 mb-8 max-w-xl"
+            <motion.div
+              className="text-base sm:text-lg text-gray-300 mb-8 max-w-xl"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
-              Contributing to open source • Building famous websites • Crafting exceptional digital experiences
-            </motion.p>
+              <p>• Contributing to open source</p>
+              <p>• Building famous websites</p>
+              <p>• Crafting exceptional digital experiences</p>
+            </motion.div>
 
             <motion.div
               className="flex gap-4 items-center mb-8"
@@ -79,7 +81,7 @@ export default function Hero() {
                 href={`https://github.com/${github_username}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="glass p-3 rounded-full hover:bg-blue-500/20 transition-all neon-glow group"
+                className="glass p-3 rounded-full hover:bg-red-500/20 transition-all neon-glow group"
               >
                 <Github className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </a>
@@ -92,12 +94,12 @@ export default function Hero() {
                 <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </a>
               <a
-                href={`https://leetcode.com/${leetcode_username}`}
+                href={`https://instagram.com/${instagram_username}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glass p-3 rounded-full hover:bg-yellow-500/20 transition-all neon-glow group"
               >
-                <Award className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <Instagram className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </a>
               <a
                 href={`mailto:${contact_mail}`}
@@ -115,7 +117,7 @@ export default function Hero() {
             >
               <button
                 onClick={() => scrollToSection('projects')}
-                className="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full font-semibold hover:scale-105 transition-all neon-glow"
+                className="px-8 py-3 bg-gradient-to-r from-red-500 to-red-600 rounded-full font-semibold hover:scale-105 transition-all neon-glow"
               >
                 View My Work
               </button>
@@ -124,6 +126,12 @@ export default function Hero() {
                 className="px-8 py-3 glass rounded-full font-semibold hover:bg-white/10 transition-all"
               >
                 Get In Touch
+              </button>
+              <button
+                onClick={() => (window.location.href = "/resume/doc.pdf")}
+                className="px-8 py-3 glass rounded-full font-semibold hover:bg-white/10 transition-all"
+              >
+                Resume
               </button>
             </motion.div>
           </motion.div>

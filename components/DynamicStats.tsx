@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { github_username, leetcode_username } from '@/config';
 import { Github, Award, Code, Users, Star } from 'lucide-react';
-import { github_username } from '@/config';
+import Tilt from 'react-parallax-tilt';
 
 const github_api = `https://api.github.com`;
 
@@ -70,14 +71,16 @@ export default function DynamicStats() {
       label: 'GitHub Followers',
       value: loading ? '...' : githubStats.followers,
       color: 'from-purple-500 to-pink-500',
-      borderColor: 'border-purple-500/30'
+      borderColor: 'border-purple-500/30',
+      href: `https://github.com/${github_username}?tab=followers`
     },
     {
       icon: Github,
       label: 'GitHub Projects',
       value: loading ? '...' : githubStats.totalRepos,
       color: 'from-blue-500 to-cyan-500',
-      borderColor: 'border-blue-500/30'
+      borderColor: 'border-blue-500/30',
+      href: `https://github.com/${github_username}?tab=repositories`
     },
     {
       icon: Star,
@@ -91,7 +94,8 @@ export default function DynamicStats() {
       label: 'LeetCode Rank',
       value: loading ? '...' : `#${leetcodeStats.ranking.toLocaleString()}`,
       color: 'from-purple-500 to-pink-500',
-      borderColor: 'border-purple-500/30'
+      borderColor: 'border-purple-500/30',
+      href: `https://leetcode.com/u/${leetcode_username}`
     },
     {
       icon: Code,
@@ -103,36 +107,53 @@ export default function DynamicStats() {
   ];
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6">
       {stats.map((stat, index) => (
         <motion.div
           key={stat.label}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: index * 0.1 }}
-          whileHover={{ y: -5, scale: 1.02 }}
-          className={`glass-dark rounded-2xl p-6 text-center hover:bg-white/5 transition-all border ${stat.borderColor} relative overflow-hidden group`}
+          transition={{ duration: 0.6, delay: index * 0.1 }}
         >
-          {/* Gradient overlay */}
-          <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-0 group-hover:opacity-10 transition-opacity`} />
+          <a href={stat.href} target="_blank" rel="noopener noreferrer">
+            <Tilt
+              tiltMaxAngleX={20}
+              tiltMaxAngleY={20}
+              scale={1.05}
+              transitionSpeed={2000}
+              perspective={1000}
+              glareEnable={false}
+              className={`glass-dark rounded-2xl p-6 text-center border ${stat.borderColor} relative overflow-hidden group cursor-pointer`}
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+            {/* 3D Shadow layer */}
+            <div className="absolute inset-0 -z-10 rounded-2xl bg-black/60 blur-2xl transform translate-y-8 transition-all" />
 
-          <div className="relative z-10">
-            <div className="flex justify-center mb-3">
-              <stat.icon className="w-8 h-8 text-gray-300" strokeWidth={1.5} />
+            {/* Gradient overlay */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${stat.color} opacity-5 group-hover:opacity-20 transition-opacity duration-300`} />
+
+            {/* Shine effect */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+            <div className="relative z-10" style={{ transform: 'translateZ(40px)' }}>
+              <div className="flex justify-center mb-3 transition-transform" style={{ transform: 'translateZ(20px)' }}>
+                <stat.icon className="w-8 h-8 text-gray-300" strokeWidth={1.5} />
+              </div>
+
+              <div className="text-3xl sm:text-4xl font-bold gradient-text mb-2" style={{ transform: 'translateZ(30px)' }}>
+                {stat.value}
+              </div>
+
+              <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wider font-medium" style={{ transform: 'translateZ(20px)' }}>
+                {stat.label}
+              </div>
             </div>
 
-            <div className="text-3xl sm:text-4xl font-bold gradient-text mb-2">
-              {stat.value}
-            </div>
-
-            <div className="text-xs sm:text-sm text-gray-400 uppercase tracking-wider font-medium">
-              {stat.label}
-            </div>
-          </div>
-
-          {/* Decorative corner */}
-          <div className={`absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl ${stat.color} opacity-5 group-hover:opacity-10 transition-opacity`} style={{ clipPath: 'polygon(100% 0, 0 0, 100% 100%)' }} />
+            {/* Border highlight */}
+            <div className={`absolute inset-0 rounded-2xl border ${stat.borderColor} opacity-50 group-hover:opacity-100 transition-opacity`} />
+          </Tilt>
+          </a>
         </motion.div>
       ))}
     </div>
