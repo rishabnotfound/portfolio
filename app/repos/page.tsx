@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Star, GitFork, Code2, ExternalLink, Github, ArrowLeft, Calendar, Eye } from 'lucide-react';
+import { Search, Star, GitFork, Code2, ExternalLink, Github, ArrowLeft, Calendar, Eye, GitCommit } from 'lucide-react';
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
@@ -22,6 +22,7 @@ interface Repo {
   topics: string[];
   updated_at: string;
   watchers_count: number;
+  commits?: number;
 }
 
 const languageColors: { [key: string]: string } = {
@@ -56,22 +57,62 @@ export default function ReposPage() {
         // Fetch more repos
         fetch(`${api_github}/users/${github_username}/repos?per_page=100&sort=updated`)
           .then((res) => res.json())
-          .then((allRepos) => {
-            const formatted = allRepos
-              .filter((repo: any) => !repo.fork && !repo.archived)
-              .map((repo: any) => ({
-                id: repo.id,
-                name: repo.name,
-                description: repo.description,
-                html_url: repo.html_url,
-                homepage: repo.homepage,
-                stars: repo.stargazers_count,
-                forks: repo.forks_count,
-                language: repo.language,
-                topics: repo.topics || [],
-                updated_at: repo.updated_at,
-                watchers_count: repo.watchers_count,
-              }));
+          .then(async (allRepos) => {
+            const filteredRepos = allRepos.filter((repo: any) => !repo.fork && !repo.archived);
+
+            // Fetch commit counts for each repo
+            const formatted = await Promise.all(
+              filteredRepos.map(async (repo: any) => {
+                try {
+                  const commitsResponse = await fetch(
+                    `${api_github}/repos/${github_username}/${repo.name}/commits?per_page=1`
+                  );
+
+                  let commitCount = 0;
+                  if (commitsResponse.ok) {
+                    const linkHeader = commitsResponse.headers.get('Link');
+                    if (linkHeader) {
+                      const match = linkHeader.match(/page=(\d+)>; rel="last"/);
+                      commitCount = match ? parseInt(match[1]) : 1;
+                    } else {
+                      const commits = await commitsResponse.json();
+                      commitCount = commits.length;
+                    }
+                  }
+
+                  return {
+                    id: repo.id,
+                    name: repo.name,
+                    description: repo.description,
+                    html_url: repo.html_url,
+                    homepage: repo.homepage,
+                    stars: repo.stargazers_count,
+                    forks: repo.forks_count,
+                    language: repo.language,
+                    topics: repo.topics || [],
+                    updated_at: repo.updated_at,
+                    watchers_count: repo.watchers_count,
+                    commits: commitCount,
+                  };
+                } catch (error) {
+                  return {
+                    id: repo.id,
+                    name: repo.name,
+                    description: repo.description,
+                    html_url: repo.html_url,
+                    homepage: repo.homepage,
+                    stars: repo.stargazers_count,
+                    forks: repo.forks_count,
+                    language: repo.language,
+                    topics: repo.topics || [],
+                    updated_at: repo.updated_at,
+                    watchers_count: repo.watchers_count,
+                    commits: 0,
+                  };
+                }
+              })
+            );
+
             setRepos(formatted);
             setFilteredRepos(formatted);
             setLoading(false);
@@ -112,13 +153,7 @@ export default function ReposPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-12"
         >
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-6"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
+
 
           <h1 className="text-5xl sm:text-6xl font-bold mb-4">
             <span className="gradient-text">All Repositories</span>
@@ -155,7 +190,7 @@ export default function ReposPage() {
                 onClick={() => setSelectedLanguage(lang)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   selectedLanguage === lang
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white'
+                    ? 'bg-gradient-to-r from-red-500 to-red-600 text-white'
                     : 'glass hover:bg-white/10 text-gray-300'
                 }`}
               >
@@ -172,7 +207,7 @@ export default function ReposPage() {
         {/* Repositories Grid */}
         {loading ? (
           <div className="flex justify-center items-center min-h-[400px]">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-red-500"></div>
           </div>
         ) : (
           <motion.div
@@ -188,17 +223,17 @@ export default function ReposPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ y: -5 }}
-                className="glass-dark rounded-xl p-6 hover:bg-white/5 transition-all group relative overflow-hidden border border-white/5 hover:border-blue-500/30"
+                className="glass-dark rounded-xl p-6 hover:bg-white/5 transition-all group relative overflow-hidden border border-white/5 hover:border-red-500/30"
               >
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-red-600/5 to-red-700/5 opacity-0 group-hover:opacity-100 transition-opacity" />
 
                 <div className="relative z-10">
                   {/* Header */}
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <Code2 className="w-5 h-5 text-blue-400 flex-shrink-0" />
-                      <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors line-clamp-1">
+                      <Code2 className="w-5 h-5 text-red-400 flex-shrink-0" />
+                      <h3 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors line-clamp-1">
                         {repo.name}
                       </h3>
                     </div>
@@ -215,7 +250,7 @@ export default function ReposPage() {
                       {repo.topics.slice(0, 3).map((topic) => (
                         <span
                           key={topic}
-                          className="px-2 py-1 text-xs rounded-full bg-blue-500/10 text-blue-300 border border-blue-500/20"
+                          className="px-2 py-1 text-xs rounded-full bg-red-500/10 text-red-300 border border-red-500/20"
                         >
                           {topic}
                         </span>
@@ -229,7 +264,7 @@ export default function ReposPage() {
                   )}
 
                   {/* Stats */}
-                  <div className="flex items-center gap-4 mb-4 text-sm text-gray-400">
+                  <div className="flex items-center gap-4 mb-4 text-sm text-gray-400 flex-wrap">
                     {repo.language && (
                       <div className="flex items-center gap-1.5">
                         <span
@@ -254,6 +289,12 @@ export default function ReposPage() {
                       <Eye className="w-4 h-4" />
                       <span>{repo.watchers_count}</span>
                     </div>
+                    {repo.commits && (
+                      <div className="flex items-center gap-1">
+                        <GitCommit className="w-4 h-4" />
+                        <span>{repo.commits}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Footer */}
@@ -266,7 +307,7 @@ export default function ReposPage() {
                         href={repo.html_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-2 glass hover:bg-blue-500/20 rounded-lg transition-all group/btn"
+                        className="p-2 glass hover:bg-red-500/20 rounded-lg transition-all group/btn"
                       >
                         <Github className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
                       </a>
@@ -275,7 +316,7 @@ export default function ReposPage() {
                           href={repo.homepage}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 glass hover:bg-purple-500/20 rounded-lg transition-all group/btn"
+                          className="p-2 glass hover:bg-red-600/20 rounded-lg transition-all group/btn"
                         >
                           <ExternalLink className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
                         </a>

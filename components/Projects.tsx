@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Github, ExternalLink, Star, GitFork, Code2, ArrowRight } from 'lucide-react';
+import { Github, ExternalLink, Star, GitFork, Code2, ArrowRight, GitCommit } from 'lucide-react';
 import Link from 'next/link';
 
 interface Repo {
@@ -16,6 +16,7 @@ interface Repo {
   language: string;
   topics: string[];
   updated_at: string;
+  commits?: number;
 }
 
 const languageColors: { [key: string]: string } = {
@@ -138,7 +139,7 @@ export default function Projects() {
                     )}
 
                     {/* Stats */}
-                    <div className="flex items-center gap-4 mb-4 text-sm text-gray-400">
+                    <div className="flex items-center gap-4 mb-4 text-sm text-gray-400 flex-wrap">
                       {repo.language && (
                         <div className="flex items-center gap-1.5">
                           <span
@@ -159,6 +160,12 @@ export default function Projects() {
                         <GitFork className="w-4 h-4" />
                         <span>{repo.forks}</span>
                       </div>
+                      {repo.commits && (
+                        <div className="flex items-center gap-1">
+                          <GitCommit className="w-4 h-4" />
+                          <span>{repo.commits}</span>
+                        </div>
+                      )}
                     </div>
 
                     {/* Links */}

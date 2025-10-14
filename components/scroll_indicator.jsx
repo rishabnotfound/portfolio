@@ -44,13 +44,19 @@ const ScrollIndicator = () => {
           strokeWidth="2" 
           fill="none"
         />
-        {/* Yellow progress bar */}
+        {/* Red gradient progress bar */}
+        <defs>
+          <linearGradient id="redGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style={{ stopColor: '#ef4444', stopOpacity: 1 }} />
+            <stop offset="100%" style={{ stopColor: '#dc2626', stopOpacity: 1 }} />
+          </linearGradient>
+        </defs>
         <rect
           x="5"
           y="5"
           width="90"
           height="90"
-          stroke="#0278fd"
+          stroke="url(#redGradient)"
           strokeWidth="2"
           fill="none"
           style={{ strokeDasharray: 360, strokeDashoffset: strokeOffset }}

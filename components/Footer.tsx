@@ -25,25 +25,10 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-lg font-semibold text-white mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              {['Home', 'About', 'Projects', 'Contact'].map((item) => (
-                <li key={item}>
-                  <a
-                    href={`#${item.toLowerCase()}`}
-                    className="text-gray-400 hover:text-white transition-colors text-sm"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div></div>
 
           {/* Social Links */}
-          <div>
+          <div className="md:ml-auto">
             <h4 className="text-lg font-semibold text-white mb-4">Connect</h4>
             <div className="flex gap-4">
               <motion.a
