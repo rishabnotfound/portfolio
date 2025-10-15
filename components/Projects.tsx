@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Github, ExternalLink, Star, GitFork, Code2, ArrowRight, GitCommit } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+import Tilt from 'react-parallax-tilt';
 
 interface Repo {
   id: number;
@@ -17,6 +19,7 @@ interface Repo {
   topics: string[];
   updated_at: string;
   commits?: number;
+  image?: string | null;
 }
 
 const languageColors: { [key: string]: string } = {
@@ -96,103 +99,142 @@ export default function Projects() {
               className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
             >
               {repos.slice(0, 6).map((repo) => (
-                <motion.div
+                <Tilt
                   key={repo.id}
-                  variants={item}
-                  whileHover={{ y: -8, scale: 1.02 }}
-                  className="glass-dark rounded-2xl p-6 hover:bg-white/5 transition-all group relative overflow-hidden border border-white/5 hover:border-red-500/30"
+                  tiltMaxAngleX={5}
+                  tiltMaxAngleY={5}
+                  perspective={1000}
+                  scale={1.02}
+                  transitionSpeed={2000}
+                  glareEnable={true}
+                  glareMaxOpacity={0.1}
+                  glareColor="#ff0000"
+                  glarePosition="all"
+                  glareBorderRadius="16px"
                 >
+                  <motion.div
+                    variants={item}
+                    className="glass-dark rounded-2xl overflow-hidden hover:bg-white/5 transition-all group relative border border-white/5 hover:border-red-500/30 flex flex-col h-full"
+                  >
                   {/* Gradient background on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-red-600/5 to-red-700/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-red-600/5 to-red-700/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                  <div className="relative z-10">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <Code2 className="w-5 h-5 text-red-400 flex-shrink-0" />
-                        <h3 className="text-lg font-bold text-white group-hover:text-red-400 transition-colors truncate">
-                          {repo.name}
-                        </h3>
+                  {/* Animated gradient border effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-red-500/20 via-red-600/20 to-red-500/20 blur-xl" />
+                  </div>
+
+                  <div className="relative z-10 flex flex-col h-full">
+                    {/* Project Image */}
+                    {repo.image ? (
+                      <div className="relative w-full h-48 overflow-hidden bg-gradient-to-br from-black/40 to-black/20">
+                        <Image
+                          src={repo.image}
+                          alt={`${repo.name} preview`}
+                          fill
+                          className="object-contain group-hover:scale-[1.02] transition-transform duration-500"
+                          unoptimized
+                        />
+                        {/* Overlay gradient for better text contrast */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                       </div>
-                    </div>
-
-                    <p className="text-gray-400 text-sm mb-4 line-clamp-2 min-h-[40px]">
-                      {repo.description || 'An awesome project built with modern technologies'}
-                    </p>
-
-                    {/* Topics */}
-                    {repo.topics && repo.topics.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {repo.topics.slice(0, 3).map((topic) => (
-                          <span
-                            key={topic}
-                            className="px-2.5 py-1 text-xs rounded-full bg-red-500/10 text-red-300 border border-red-500/20"
-                          >
-                            {topic}
-                          </span>
-                        ))}
-                        {repo.topics.length > 3 && (
-                          <span className="px-2.5 py-1 text-xs rounded-full bg-gray-500/10 text-gray-400 border border-gray-500/20">
-                            +{repo.topics.length - 3}
-                          </span>
-                        )}
+                    ) : (
+                      <div className="relative w-full h-48 bg-gradient-to-br from-red-500/10 via-black/40 to-black/20 flex items-center justify-center">
+                        <Code2 className="w-16 h-16 text-red-500/30" />
                       </div>
                     )}
 
-                    {/* Stats */}
-                    <div className="flex items-center gap-4 mb-4 text-sm text-gray-400 flex-wrap">
-                      {repo.language && (
-                        <div className="flex items-center gap-1.5">
-                          <span
-                            className="w-3 h-3 rounded-full"
-                            style={{
-                              backgroundColor:
-                                languageColors[repo.language] || '#888',
-                            }}
-                          />
-                          <span>{repo.language}</span>
-                        </div>
-                      )}
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4" />
-                        <span>{repo.stars}</span>
+                    {/* Content */}
+                    <div className="p-6 flex flex-col flex-1">
+                      {/* Title */}
+                      <div className="flex items-center gap-2 mb-3">
+                        <Code2 className="w-5 h-5 text-red-400 flex-shrink-0" />
+                        <h3 className="text-xl font-bold text-white group-hover:text-red-400 transition-colors truncate">
+                          {repo.name}
+                        </h3>
                       </div>
-                      <div className="flex items-center gap-1">
-                        <GitFork className="w-4 h-4" />
-                        <span>{repo.forks}</span>
-                      </div>
-                      {repo.commits && (
-                        <div className="flex items-center gap-1">
-                          <GitCommit className="w-4 h-4" />
-                          <span>{repo.commits}</span>
-                        </div>
-                      )}
-                    </div>
 
-                    {/* Links */}
-                    <div className="flex gap-2 pt-4 border-t border-white/5">
-                      <a
-                        href={repo.html_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-sm font-medium transition-all flex-1 border border-red-500/20 group/btn"
-                      >
-                        <Github className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
-                        <span>Code</span>
-                      </a>
-                      {repo.homepage && (
+                      {/* Description */}
+                      <p className="text-gray-400 text-sm mb-4 line-clamp-2 flex-1">
+                        {repo.description || 'An awesome project built with modern technologies'}
+                      </p>
+
+                      {/* Topics */}
+                      {repo.topics && repo.topics.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mb-4">
+                          {repo.topics.slice(0, 3).map((topic) => (
+                            <span
+                              key={topic}
+                              className="px-3 py-1 text-xs font-medium rounded-full bg-red-500/10 text-red-300 border border-red-500/20 hover:bg-red-500/20 transition-colors"
+                            >
+                              #{topic}
+                            </span>
+                          ))}
+                          {repo.topics.length > 3 && (
+                            <span className="px-3 py-1 text-xs font-medium rounded-full bg-white/5 text-gray-400 border border-white/10">
+                              +{repo.topics.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Stats Bar */}
+                      <div className="flex items-center gap-4 mb-4 text-sm text-gray-400 pb-4 border-b border-white/5">
+                        {repo.language && (
+                          <div className="flex items-center gap-1.5 group/lang">
+                            <span
+                              className="w-3 h-3 rounded-full ring-2 ring-white/10 group-hover/lang:ring-white/20 transition-all"
+                              style={{
+                                backgroundColor:
+                                  languageColors[repo.language] || '#888',
+                              }}
+                            />
+                            <span className="text-xs font-medium">{repo.language}</span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-1 group/stat hover:text-yellow-400 transition-colors">
+                          <Star className="w-4 h-4" />
+                          <span className="font-semibold">{repo.stars}</span>
+                        </div>
+                        <div className="flex items-center gap-1 group/stat hover:text-blue-400 transition-colors">
+                          <GitFork className="w-4 h-4" />
+                          <span className="font-semibold">{repo.forks}</span>
+                        </div>
+                        {repo.commits && (
+                          <div className="flex items-center gap-1 group/stat hover:text-green-400 transition-colors">
+                            <GitCommit className="w-4 h-4" />
+                            <span className="font-semibold">{repo.commits}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2">
                         <a
-                          href={repo.homepage}
+                          href={repo.html_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600/10 hover:bg-red-600/20 rounded-lg text-sm font-medium transition-all border border-red-600/20 group/btn"
+                          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-500/10 to-red-600/10 hover:from-red-500/20 hover:to-red-600/20 rounded-xl text-sm font-semibold transition-all flex-1 border border-red-500/20 hover:border-red-500/40 group/btn hover:shadow-lg hover:shadow-red-500/20"
                         >
-                          <ExternalLink className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
-                          <span className="hidden sm:inline">Live</span>
+                          <Github className="w-4 h-4 group-hover/btn:rotate-12 transition-transform" />
+                          <span>Code</span>
                         </a>
-                      )}
+                        {repo.homepage && (
+                          <a
+                            href={repo.homepage}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-600/10 to-red-700/10 hover:from-red-600/20 hover:to-red-700/20 rounded-xl text-sm font-semibold transition-all flex-1 border border-red-600/20 hover:border-red-600/40 group/btn hover:shadow-lg hover:shadow-red-600/20"
+                          >
+                            <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                            <span>Demo</span>
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </motion.div>
+              </Tilt>
               ))}
             </motion.div>
           )}

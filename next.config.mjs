@@ -18,6 +18,18 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'media.discordapp.net',
       },
+      {
+        protocol: 'https',
+        hostname: 'fmhy.net',
+      },
+      {
+        protocol: 'https',
+        hostname: 'github.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.githubusercontent.com',
+      }
     ],
   },
   webpack: (config) => {

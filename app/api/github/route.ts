@@ -25,10 +25,11 @@ export async function GET() {
 
     const filteredRepos = repos.filter((repo: any) => !repo.fork && !repo.archived);
 
-    // Fetch commit counts for each repo
+    // Fetch commit counts and README images for each repo
     const formattedRepos = await Promise.all(
       filteredRepos.map(async (repo: any) => {
         try {
+          // Fetch commit count
           const commitsResponse = await fetch(
             `${api_github}/repos/${username}/${repo.name}/commits?per_page=1`,
             {
@@ -51,6 +52,37 @@ export async function GET() {
             }
           }
 
+          // Fetch README to extract image
+          let imageUrl = null;
+          try {
+            const readmeResponse = await fetch(
+              `${api_github}/repos/${username}/${repo.name}/readme`,
+              {
+                headers: {
+                  'Accept': 'application/vnd.github.v3+json',
+                },
+                next: { revalidate: 3600 }
+              }
+            );
+
+            if (readmeResponse.ok) {
+              const readmeData = await readmeResponse.json();
+              const readmeContent = Buffer.from(readmeData.content, 'base64').toString('utf-8');
+
+              // Extract first image from markdown (looking for ![alt](url) or <img> tags)
+              const markdownImageMatch = readmeContent.match(/!\[.*?\]\((https?:\/\/[^\)]+)\)/);
+              const htmlImageMatch = readmeContent.match(/src=["'](https?:\/\/[^"']+)["']/);
+
+              if (markdownImageMatch) {
+                imageUrl = markdownImageMatch[1];
+              } else if (htmlImageMatch) {
+                imageUrl = htmlImageMatch[1];
+              }
+            }
+          } catch (readmeError) {
+            // If README fetch fails, continue without image
+          }
+
           return {
             id: repo.id,
             name: repo.name,
@@ -64,6 +96,7 @@ export async function GET() {
             created_at: repo.created_at,
             updated_at: repo.updated_at,
             commits: commitCount,
+            image: imageUrl,
           };
         } catch (error) {
           return {
@@ -79,6 +112,7 @@ export async function GET() {
             created_at: repo.created_at,
             updated_at: repo.updated_at,
             commits: 0,
+            image: null,
           };
         }
       })

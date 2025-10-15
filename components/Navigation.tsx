@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Home, User, Briefcase, Mail } from 'lucide-react';
+import { Menu, X, Home, User, Briefcase, Mail, GitPullRequest } from 'lucide-react';
 import { navbar_title } from '@/config';
 import { usePathname } from 'next/navigation';
 
@@ -93,6 +93,7 @@ export default function Navigation() {
     { name: 'About', href: '#about', icon: User },
     { name: 'Skills', href: '#skills', icon: Briefcase },
     { name: 'Projects', href: '#projects', icon: Briefcase },
+    { name: 'OpenSource', href: '#opensource', icon: GitPullRequest },
     { name: 'Contact', href: '#contact', icon: Mail },
   ];
 
