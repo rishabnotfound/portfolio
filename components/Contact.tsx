@@ -1,42 +1,78 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Mail, Github, Send, CheckCircle, Code2, Linkedin, Instagram } from 'lucide-react';
-import { contact_mail, github_username, instagram_username, leetcode_username, linkedin_username } from '@/config';
+import { Mail, Github, Linkedin, Instagram } from 'lucide-react';
+import { contact_mail, github_username, instagram_username, linkedin_username } from '@/config';
+import Tilt from 'react-parallax-tilt';
 
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: '',
-  });
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle');
-
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus('sending');
+  const socialLinks = [
+    {
+      name: 'Email',
+      href: `mailto:${contact_mail}`,
+      icon: Mail,
+      value: contact_mail,
+      color: 'from-red-500 to-red-600',
+      borderColor: 'border-red-500/30',
+      iconBg: 'bg-red-500/20',
+      iconBgHover: 'group-hover:bg-red-500/30',
+      iconColor: 'text-red-400',
+    },
+    {
+      name: 'GitHub',
+      href: `https://github.com/${github_username}`,
+      icon: Github,
+      value: `@${github_username}`,
+      color: 'from-gray-500 to-gray-600',
+      borderColor: 'border-gray-500/30',
+      iconBg: 'bg-gray-500/20',
+      iconBgHover: 'group-hover:bg-gray-500/30',
+      iconColor: 'text-gray-400',
+      external: true,
+    },
+    {
+      name: 'LinkedIn',
+      href: `https://linkedin.com/in/${linkedin_username}`,
+      icon: Linkedin,
+      value: `@${linkedin_username}`,
+      color: 'from-blue-500 to-blue-600',
+      borderColor: 'border-blue-500/30',
+      iconBg: 'bg-blue-500/20',
+      iconBgHover: 'group-hover:bg-blue-500/30',
+      iconColor: 'text-blue-400',
+      external: true,
+    },
+    {
+      name: 'Instagram',
+      href: `https://instagram.com/${instagram_username}`,
+      icon: Instagram,
+      value: `@${instagram_username}`,
+      color: 'from-pink-500 to-purple-600',
+      borderColor: 'border-pink-500/30',
+      iconBg: 'bg-pink-500/20',
+      iconBgHover: 'group-hover:bg-pink-500/30',
+      iconColor: 'text-pink-400',
+      external: true,
+    },
+  ];
 
-    // Simulate sending (in a real app, this would be an API call)
-    setTimeout(() => {
-      setStatus('sent');
-      setTimeout(() => {
-        setStatus('idle');
-        setFormData({ name: '', email: '', message: '' });
-      }, 3000);
-    }, 1500);
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 },
   };
 
   return (
@@ -44,7 +80,7 @@ export default function Contact() {
       className="min-h-screen py-20 px-4 sm:px-6 lg:px-8 relative flex items-center"
       id="contact"
     >
-      <div className="max-w-6xl mx-auto w-full">
+      <div className="max-w-5xl mx-auto w-full">
         <motion.div
           ref={ref}
           initial={{ opacity: 0, y: 50 }}
@@ -56,203 +92,50 @@ export default function Contact() {
           </h2>
 
           <p className="text-lg sm:text-xl text-gray-300 text-center max-w-3xl mx-auto mb-16">
-            Have a project in mind or want to collaborate? Feel free to reach out!
+            Have a project in mind or want to collaborate? Feel free to reach out through any of these platforms!
           </p>
 
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Contact Info */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="space-y-8"
-            >
-              <div>
-                <h3 className="text-3xl font-bold mb-6 text-white">
-                  Let&apos;s Connect
-                </h3>
-                <p className="text-gray-400 text-lg leading-relaxed">
-                  I&apos;m always interested in hearing about new projects and
-                  opportunities. Whether you have a question or just want to say
-                  hi, I&apos;ll try my best to get back to you!
-                </p>
-              </div>
-
-              <div className="space-y-6">
-                <motion.a
-                  href={`mailto:${contact_mail}`}
-                  whileHover={{ scale: 1.05, x: 10 }}
-                  className="flex items-center gap-4 glass-dark p-4 rounded-xl hover:bg-white/5 transition-all group"
+          {/* Social Links Grid */}
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate={isInView ? 'show' : 'hidden'}
+            className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto"
+          >
+            {socialLinks.map((link) => (
+              <motion.div key={link.name} variants={item}>
+                <Tilt
+                  tiltMaxAngleX={5}
+                  tiltMaxAngleY={5}
+                  scale={1.02}
+                  transitionSpeed={2000}
+                  perspective={1000}
                 >
-                  <div className="p-3 bg-red-500/20 rounded-lg group-hover:bg-red-500/30 transition-all">
-                    <Mail className="w-6 h-6 text-red-400" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-400">Email</div>
-                    <div className="text-white font-medium">
-                      {contact_mail}
+                  <a
+                    href={link.href}
+                    draggable={false}
+                    target={link.external ? '_blank' : undefined}
+                    rel={link.external ? 'noopener noreferrer' : undefined}
+                    className={`flex items-center gap-4 glass-dark p-6 rounded-xl hover:bg-white/5 transition-all group border ${link.borderColor} relative overflow-hidden`}
+                  >
+                    {/* Gradient overlay */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${link.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
+
+                    {/* Icon */}
+                    <div className={`relative z-10 p-3 ${link.iconBg} rounded-lg ${link.iconBgHover} transition-all`}>
+                      <link.icon className={`w-6 h-6 ${link.iconColor}`} />
                     </div>
-                  </div>
-                </motion.a>
 
-                <motion.a
-                  href={`https://github.com/${github_username}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.05, x: 10 }}
-                  className="flex items-center gap-4 glass-dark p-4 rounded-xl hover:bg-white/5 transition-all group"
-                >
-                  <div className="p-3 bg-red-600/20 rounded-lg group-hover:bg-red-600/30 transition-all">
-                    <Github className="w-6 h-6 text-red-400" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-400">GitHub</div>
-                    <div className="text-white font-medium">@{github_username}</div>
-                  </div>
-                </motion.a>
-
-                <motion.a
-                  href={`https://linkedin.com/in/${linkedin_username}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.05, x: 10 }}
-                  className="flex items-center gap-4 glass-dark p-4 rounded-xl hover:bg-white/5 transition-all group"
-                >
-                  <div className="p-3 bg-pink-500/20 rounded-lg group-hover:bg-pink-500/30 transition-all">
-                    <Linkedin className="w-6 h-6 text-pink-400" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-400">LinkedIn</div>
-                    <div className="text-white font-medium">@{linkedin_username}</div>
-                  </div>
-                </motion.a>
-
-                <motion.a
-                  href={`https://instagram.com/${instagram_username}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.05, x: 10 }}
-                  className="flex items-center gap-4 glass-dark p-4 rounded-xl hover:bg-white/5 transition-all group"
-                >
-                  <div className="p-3 bg-orange-500/20 rounded-lg group-hover:bg-orange-500/30 transition-all">
-                    <Instagram className="w-6 h-6 text-orange-400" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-400">Instagram</div>
-                    <div className="text-white font-medium">@{instagram_username}</div>
-                  </div>
-                </motion.a>
-              </div>
-
-              {/* Decorative element */}
-              <motion.div
-                animate={{
-                  rotate: [0, 360],
-                }}
-                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-                className="hidden lg:block w-64 h-64 relative"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-600 rounded-full blur-3xl opacity-20" />
+                    {/* Text */}
+                    <div className="relative z-10">
+                      <div className="text-sm text-gray-400">{link.name}</div>
+                      <div className="text-white font-medium">{link.value}</div>
+                    </div>
+                  </a>
+                </Tilt>
               </motion.div>
-            </motion.div>
-
-            {/* Contact Form */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label
-                    htmlFor="name"
-                    className="block text-sm font-medium text-gray-300 mb-2"
-                  >
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 glass-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-white placeholder-gray-500"
-                    placeholder="Your name"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-300 mb-2"
-                  >
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-3 glass-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 transition-all text-white placeholder-gray-500"
-                    placeholder="your.email@example.com"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="block text-sm font-medium text-gray-300 mb-2"
-                  >
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    required
-                    rows={6}
-                    className="w-full px-4 py-3 glass-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all text-white placeholder-gray-500 resize-none"
-                    placeholder="Your message..."
-                  />
-                </div>
-
-                <motion.button
-                  type="submit"
-                  disabled={status !== 'idle'}
-                  whileHover={{ scale: status === 'idle' ? 1.05 : 1 }}
-                  whileTap={{ scale: status === 'idle' ? 0.95 : 1 }}
-                  className={`w-full py-4 rounded-xl font-semibold flex items-center justify-center gap-2 transition-all ${
-                    status === 'sent'
-                      ? 'bg-green-500 hover:bg-green-600'
-                      : 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
-                  } disabled:opacity-50 disabled:cursor-not-allowed neon-glow`}
-                >
-                  {status === 'idle' && (
-                    <>
-                      <Send className="w-5 h-5" />
-                      Send Message
-                    </>
-                  )}
-                  {status === 'sending' && (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white" />
-                      Sending...
-                    </>
-                  )}
-                  {status === 'sent' && (
-                    <>
-                      <CheckCircle className="w-5 h-5" />
-                      Message Sent!
-                    </>
-                  )}
-                </motion.button>
-              </form>
-            </motion.div>
-          </div>
+            ))}
+          </motion.div>
         </motion.div>
       </div>
     </section>

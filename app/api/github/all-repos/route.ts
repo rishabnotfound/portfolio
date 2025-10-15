@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { github_username } from '@/config';
 
-const api_github = `https://api.github.com`
+const api_github = `https://api.github.com`;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
 export async function GET() {
@@ -122,11 +122,7 @@ export async function GET() {
       })
     );
 
-    const sortedRepos = formattedRepos
-      .sort((a: any, b: any) => b.stars - a.stars)
-      .slice(0, 6);
-
-    return NextResponse.json(sortedRepos);
+    return NextResponse.json(formattedRepos);
   } catch (error) {
     console.error('Error fetching GitHub data:', error);
     return NextResponse.json(

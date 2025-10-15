@@ -1,7 +1,5 @@
 # Rishab's Portfolio
 
-![alt text](image.png)
-
 A stunning, modern portfolio website built with Next.js, featuring 3D animations, WebGL effects, and smooth interactions.
 
 ## Features

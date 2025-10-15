@@ -79,6 +79,7 @@ export default function Hero() {
             >
               <a
                 href={`https://github.com/${github_username}`}
+                draggable={false}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glass p-3 rounded-full hover:bg-red-500/20 transition-all neon-glow group"
@@ -87,6 +88,7 @@ export default function Hero() {
               </a>
               <a
                 href={`https://linkedin.com/in/${leetcode_username}`}
+                draggable={false}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glass p-3 rounded-full hover:bg-yellow-500/20 transition-all neon-glow group"
@@ -95,6 +97,7 @@ export default function Hero() {
               </a>
               <a
                 href={`https://instagram.com/${instagram_username}`}
+                draggable={false}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="glass p-3 rounded-full hover:bg-yellow-500/20 transition-all neon-glow group"
@@ -103,6 +106,7 @@ export default function Hero() {
               </a>
               <a
                 href={`mailto:${contact_mail}`}
+                draggable={false}
                 className="glass p-3 rounded-full hover:bg-pink-500/20 transition-all neon-glow group"
               >
                 <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />

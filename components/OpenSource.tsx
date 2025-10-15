@@ -78,7 +78,8 @@ export default function OpenSource() {
                         alt={contribution.logoAlt}
                         width={80}
                         height={80}
-                        className="object-contain"
+                        className="object-contain select-none pointer-events-none"
+                        draggable={false}
                       />
                     </div>
                   </div>
@@ -111,6 +112,7 @@ export default function OpenSource() {
                       href={contribution.repoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      draggable={false}
                       className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-500/10 hover:bg-red-500/20 rounded-lg text-sm font-medium transition-all flex-1 border border-red-500/20 group/btn"
                     >
                       <Github className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />
@@ -120,6 +122,7 @@ export default function OpenSource() {
                       href={contribution.pullRequestUrl}
                       target="_blank"
                       rel="noopener noreferrer"
+                      draggable={false}
                       className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600/10 hover:bg-red-600/20 rounded-lg text-sm font-medium transition-all flex-1 border border-red-600/20 group/btn"
                     >
                       <ExternalLink className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />

@@ -6,8 +6,6 @@ import { github_username, leetcode_username } from '@/config';
 import { Github, Award, Code, Users, Star } from 'lucide-react';
 import Tilt from 'react-parallax-tilt';
 
-const github_api = `https://api.github.com`;
-
 interface GitHubStats {
   totalRepos: number;
   totalStars: number;
@@ -27,30 +25,23 @@ export default function DynamicStats() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch GitHub stats
+    // Fetch GitHub stats using API endpoints with token authentication
     Promise.all([
       fetch('/api/github').then(res => res.json()),
-      fetch('/api/leetcode_profile').then(res => res.json()),
-      fetch(`${github_api}/users/${github_username}`).then(res => res.json())
+      fetch('/api/github/user').then(res => res.json()),
+      fetch('/api/leetcode_profile').then(res => res.json())
     ])
-      .then(([githubData, leetcodeData, userData]) => {
+      .then(([reposData, userData, leetcodeData]) => {
         // Calculate GitHub stats
-        const totalStars = githubData.reduce((sum: number, repo: any) => sum + (repo.stars || 0), 0);
-        const totalForks = githubData.reduce((sum: number, repo: any) => sum + (repo.forks || 0), 0);
+        const totalStars = reposData.reduce((sum: number, repo: any) => sum + (repo.stars || 0), 0);
+        const totalForks = reposData.reduce((sum: number, repo: any) => sum + (repo.forks || 0), 0);
 
-        // Fetch all repos for accurate count
-        fetch(`${github_api}/users/${github_username}/repos?per_page=100`)
-          .then(res => res.json())
-          .then(allRepos => {
-            const nonForkedRepos = allRepos.filter((repo: any) => !repo.fork && !repo.archived);
-
-            setGithubStats({
-              totalRepos: nonForkedRepos.length,
-              totalStars,
-              totalForks,
-              followers: userData.followers || 0
-            });
-          });
+        setGithubStats({
+          totalRepos: userData.totalRepos || 0,
+          totalStars,
+          totalForks,
+          followers: userData.followers || 0
+        });
 
         setLeetcodeStats({
           ranking: leetcodeData.ranking || 0,
@@ -116,7 +107,7 @@ export default function DynamicStats() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: index * 0.1 }}
         >
-          <a href={stat.href} target="_blank" rel="noopener noreferrer">
+          <a href={stat.href} target="_blank" rel="noopener noreferrer" draggable={false}>
             <Tilt
               tiltMaxAngleX={20}
               tiltMaxAngleY={20}

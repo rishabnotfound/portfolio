@@ -54,99 +54,13 @@ export default function ReposPage() {
   const [selectedLanguage, setSelectedLanguage] = useState('All');
 
   useEffect(() => {
-    fetch('/api/github')
+    // Fetch all repos from the new API endpoint with GitHub token authentication
+    fetch('/api/github/all-repos')
       .then((res) => res.json())
       .then((data) => {
-        // Fetch more repos
-        fetch(`${api_github}/users/${github_username}/repos?per_page=100&sort=updated`)
-          .then((res) => res.json())
-          .then(async (allRepos) => {
-            const filteredRepos = allRepos.filter((repo: any) => !repo.fork && !repo.archived);
-
-            // Fetch commit counts and README images for each repo
-            const formatted = await Promise.all(
-              filteredRepos.map(async (repo: any) => {
-                try {
-                  const commitsResponse = await fetch(
-                    `${api_github}/repos/${github_username}/${repo.name}/commits?per_page=1`
-                  );
-
-                  let commitCount = 0;
-                  if (commitsResponse.ok) {
-                    const linkHeader = commitsResponse.headers.get('Link');
-                    if (linkHeader) {
-                      const match = linkHeader.match(/page=(\d+)>; rel="last"/);
-                      commitCount = match ? parseInt(match[1]) : 1;
-                    } else {
-                      const commits = await commitsResponse.json();
-                      commitCount = commits.length;
-                    }
-                  }
-
-                  // Fetch README to extract image
-                  let imageUrl = null;
-                  try {
-                    const readmeResponse = await fetch(
-                      `${api_github}/repos/${github_username}/${repo.name}/readme`
-                    );
-
-                    if (readmeResponse.ok) {
-                      const readmeData = await readmeResponse.json();
-                      const readmeContent = Buffer.from(readmeData.content, 'base64').toString('utf-8');
-
-                      // Extract first image from markdown
-                      const markdownImageMatch = readmeContent.match(/!\[.*?\]\((https?:\/\/[^\)]+)\)/);
-                      const htmlImageMatch = readmeContent.match(/src=["'](https?:\/\/[^"']+)["']/);
-
-                      if (markdownImageMatch) {
-                        imageUrl = markdownImageMatch[1];
-                      } else if (htmlImageMatch) {
-                        imageUrl = htmlImageMatch[1];
-                      }
-                    }
-                  } catch (readmeError) {
-                    // Continue without image
-                  }
-
-                  return {
-                    id: repo.id,
-                    name: repo.name,
-                    description: repo.description,
-                    html_url: repo.html_url,
-                    homepage: repo.homepage,
-                    stars: repo.stargazers_count,
-                    forks: repo.forks_count,
-                    language: repo.language,
-                    topics: repo.topics || [],
-                    updated_at: repo.updated_at,
-                    watchers_count: repo.watchers_count,
-                    commits: commitCount,
-                    image: imageUrl,
-                  };
-                } catch (error) {
-                  return {
-                    id: repo.id,
-                    name: repo.name,
-                    description: repo.description,
-                    html_url: repo.html_url,
-                    homepage: repo.homepage,
-                    stars: repo.stargazers_count,
-                    forks: repo.forks_count,
-                    language: repo.language,
-                    topics: repo.topics || [],
-                    updated_at: repo.updated_at,
-                    watchers_count: repo.watchers_count,
-                    commits: 0,
-                    image: null,
-                  };
-                }
-              })
-            );
-
-            setRepos(formatted);
-            setFilteredRepos(formatted);
-            setLoading(false);
-          });
+        setRepos(data);
+        setFilteredRepos(data);
+        setLoading(false);
       })
       .catch(() => setLoading(false));
   }, []);
@@ -282,8 +196,9 @@ export default function ReposPage() {
                         src={repo.image}
                         alt={`${repo.name} preview`}
                         fill
-                        className="object-contain group-hover:scale-[1.02] transition-transform duration-500"
+                        className="object-contain group-hover:scale-[1.02] transition-transform duration-500 select-none pointer-events-none"
                         unoptimized
+                        draggable={false}
                       />
                       {/* Overlay gradient for better text contrast */}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -368,6 +283,7 @@ export default function ReposPage() {
                           href={repo.html_url}
                           target="_blank"
                           rel="noopener noreferrer"
+                          draggable={false}
                           className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-500/10 to-red-600/10 hover:from-red-500/20 hover:to-red-600/20 rounded-xl text-sm font-semibold transition-all flex-1 border border-red-500/20 hover:border-red-500/40 group/btn hover:shadow-lg hover:shadow-red-500/20"
                         >
                           <Github className="w-4 h-4 group-hover/btn:rotate-12 transition-transform" />
@@ -378,6 +294,7 @@ export default function ReposPage() {
                             href={repo.homepage}
                             target="_blank"
                             rel="noopener noreferrer"
+                            draggable={false}
                             className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-600/10 to-red-700/10 hover:from-red-600/20 hover:to-red-700/20 rounded-xl text-sm font-semibold transition-all flex-1 border border-red-600/20 hover:border-red-600/40 group/btn hover:shadow-lg hover:shadow-red-600/20"
                           >
                             <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />

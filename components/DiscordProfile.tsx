@@ -146,7 +146,8 @@ export default function DiscordProfile() {
                   src={profile.banner.link}
                   alt="Banner"
                   fill
-                  className="object-cover"
+                  draggable={false}
+                  className="object-cover select-none pointer-events-none"
                 />
               )}
             </div>
@@ -160,7 +161,8 @@ export default function DiscordProfile() {
                     src={profile.avatar.link}
                     alt={profile.username}
                     fill
-                    className="rounded-full"
+                    draggable={false}
+                    className="rounded-full select-none pointer-events-none"
                   />
                   {profile.avatar_decoration && (
                     <div className="absolute -inset-3">
@@ -168,7 +170,8 @@ export default function DiscordProfile() {
                         src={profile.avatar_decoration.link}
                         alt="Decoration"
                         fill
-                        className="object-contain"
+                        draggable={false}
+                        className="object-contain select-none pointer-events-none"
                       />
                     </div>
                   )}
@@ -190,6 +193,8 @@ export default function DiscordProfile() {
                         alt={profile.clan.tag}
                         width={16}
                         height={16}
+                        draggable={false}
+                        className="select-none"
                       />
                       <span>{profile.clan.tag}</span>
                     </div>
@@ -208,8 +213,9 @@ export default function DiscordProfile() {
                         alt={badge.name}
                         width={18}
                         height={18}
+                        draggable={false}
                         title={badge.tooltip || badge.name}
-                        className="inline-block"
+                        className="inline-block select-none"
                       />
                     ))}
                   </div>
@@ -254,7 +260,8 @@ export default function DiscordProfile() {
                               src={getAssetUrl(activity.assets.large_image, activity.application_id)}
                               alt={activity.name}
                               fill
-                              className={`object-cover ${activity.type === 2 ? 'rounded' : 'rounded'}`}
+                              draggable={false}
+                              className={`object-cover ${activity.type === 2 ? 'rounded' : 'rounded'} select-none pointer-events-none`}
                             />
                             {activity.assets?.small_image && (
                               <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full overflow-hidden border-2 border-[#1e1f22]">
@@ -262,11 +269,12 @@ export default function DiscordProfile() {
                                   src={getAssetUrl(activity.assets.small_image, activity.application_id)}
                                   alt="Small icon"
                                   fill
-                                  className="object-cover"
+                                  draggable={false}
+                                  className="object-cover select-none pointer-events-none"
                                 />
                               </div>
                             )}
-    
+
                           </div>
                         )}
                         <div className="flex-1 min-w-0">

@@ -210,7 +210,8 @@ export default function Skills() {
                             <img
                               src={skill.icon}
                               alt={skill.name}
-                              className="w-full h-full object-contain transition-transform group-hover/skill:scale-110"
+                              draggable={false}
+                              className="w-full h-full object-contain transition-transform group-hover/skill:scale-110 select-none"
                               onError={(e) => {
                                 e.currentTarget.src = 'https://via.placeholder.com/48/1f2937/ffffff?text=' + skill.name[0];
                               }}

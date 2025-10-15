@@ -33,6 +33,7 @@ export default function Footer() {
             <div className="flex gap-4">
               <motion.a
                 href={`https://github.com/${github_username}`}
+                draggable={false}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
@@ -43,6 +44,7 @@ export default function Footer() {
               </motion.a>
               <motion.a
                 href={`https://linkedin.com/in/${linkedin_username}`}
+                draggable={false}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
@@ -53,6 +55,7 @@ export default function Footer() {
               </motion.a>
               <motion.a
                 href={`https://instagram.com/${instagram_username}`}
+                draggable={false}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
@@ -63,6 +66,7 @@ export default function Footer() {
               </motion.a>
               <motion.a
                 href={`https://discord.com/users/${discord_userid}`}
+                draggable={false}
                 target="_blank"
                 rel="noopener noreferrer"
                 whileHover={{ scale: 1.1 }}
@@ -75,6 +79,7 @@ export default function Footer() {
               </motion.a>
               <motion.a
                 href={`mailto:${contact_mail}`}
+                draggable={false}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 className="p-3 rounded-lg hover:bg-white/5 transition-all"

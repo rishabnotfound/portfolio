@@ -132,8 +132,9 @@ export default function Projects() {
                           src={repo.image}
                           alt={`${repo.name} preview`}
                           fill
-                          className="object-contain group-hover:scale-[1.02] transition-transform duration-500"
+                          className="object-contain group-hover:scale-[1.02] transition-transform duration-500 select-none pointer-events-none"
                           unoptimized
+                          draggable={false}
                         />
                         {/* Overlay gradient for better text contrast */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
@@ -214,6 +215,7 @@ export default function Projects() {
                           href={repo.html_url}
                           target="_blank"
                           rel="noopener noreferrer"
+                          draggable={false}
                           className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-500/10 to-red-600/10 hover:from-red-500/20 hover:to-red-600/20 rounded-xl text-sm font-semibold transition-all flex-1 border border-red-500/20 hover:border-red-500/40 group/btn hover:shadow-lg hover:shadow-red-500/20"
                         >
                           <Github className="w-4 h-4 group-hover/btn:rotate-12 transition-transform" />
@@ -224,6 +226,7 @@ export default function Projects() {
                             href={repo.homepage}
                             target="_blank"
                             rel="noopener noreferrer"
+                            draggable={false}
                             className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-red-600/10 to-red-700/10 hover:from-red-600/20 hover:to-red-700/20 rounded-xl text-sm font-semibold transition-all flex-1 border border-red-600/20 hover:border-red-600/40 group/btn hover:shadow-lg hover:shadow-red-600/20"
                           >
                             <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
@@ -241,17 +244,38 @@ export default function Projects() {
 
           {/* View More Link */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-center mt-12"
+            className="text-center mt-16"
           >
             <Link
+              draggable={false}
               href="/repos"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-red-500 to-red-600 rounded-full font-semibold hover:scale-105 transition-all neon-glow group"
+              className="group relative inline-flex items-center gap-3 px-10 py-5 overflow-hidden rounded-2xl font-bold text-white transition-all duration-300"
             >
-              <span>View More</span>
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              {/* Animated gradient background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-red-600/80 via-red-700/80 to-red-600/80 bg-[length:200%_100%] animate-gradient" />
+
+              {/* Hover glow effect */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/40 via-red-600/40 to-red-500/40 blur-xl" />
+              </div>
+
+              {/* Shine effect on hover */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-500">
+                <div className="absolute top-0 -left-full h-full w-1/2 bg-gradient-to-r from-transparent via-white to-transparent skew-x-12 group-hover:left-full transition-all duration-1000" />
+              </div>
+
+              {/* Content */}
+              <span className="relative z-10 flex items-center gap-3 text-lg">
+                <Code2 className="w-5 h-5" />
+                <span>Explore All Projects</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform duration-300" />
+              </span>
+
+              {/* Border glow */}
+              <div className="absolute inset-0 rounded-2xl border-2 border-red-500/30 group-hover:border-red-400/50 transition-colors" />
             </Link>
           </motion.div>
         </motion.div>

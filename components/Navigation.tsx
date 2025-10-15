@@ -129,6 +129,7 @@ export default function Navigation() {
                   scrollToSection('#home');
                 }
               }}
+              draggable={false}
               className="text-2xl font-bold gradient-text"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -170,6 +171,7 @@ export default function Navigation() {
                         scrollToSection(item.href);
                       }
                     }}
+                    draggable={false}
                     className={`relative z-10 px-6 py-2 transition-colors font-medium ${
                       isHomePage && isActive ? 'text-white' : 'text-gray-300 hover:text-white'
                     }`}
@@ -221,6 +223,7 @@ export default function Navigation() {
                         scrollToSection(item.href);
                       }
                     }}
+                    draggable={false}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
