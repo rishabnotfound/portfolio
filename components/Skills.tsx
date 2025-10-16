@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Code2, Database, Cloud, Layout, Server, Wrench, Palette, Package } from 'lucide-react';
 import Tilt from 'react-parallax-tilt';
 
@@ -58,8 +58,10 @@ const skillCategories = [
     borderColor: 'border-green-500/30',
     skills: [
       { name: 'Node.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg' },
+      { name: 'Express', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg' },
       { name: 'Socket.io', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/socketio/socketio-original.svg' },
       { name: 'Nginx', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg' },
+      { name: 'REST API', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg' },
       { name: 'JWT', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/json/json-original.svg' },
     ],
   },
@@ -82,9 +84,12 @@ const skillCategories = [
     borderColor: 'border-cyan-500/30',
     skills: [
       { name: 'Google Cloud', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/googlecloud/googlecloud-original.svg' },
+      { name: 'VPS Hosting', icon: 'https://cdn.simpleicons.org/ubuntu'},
+      { name: 'Cloud Panel', icon: 'https://cdn.worldvectorlogo.com/logos/cloudpanel.svg'},
       { name: 'Vercel', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vercel/vercel-original.svg' },
       { name: 'Cloudflare', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cloudflare/cloudflare-original.svg' },
       { name: 'Netlify', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/netlify/netlify-original.svg' },
+      { name: 'CodePen', icon: 'https://cdn.simpleicons.org/codepen' },
       { name: 'GitHub Pages', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg' },
       { name: 'Replit', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/replit/replit-original.svg' },
       { name: 'Glitch', icon: 'https://cdn.simpleicons.org/glitch/3333FF/white' },
@@ -98,30 +103,35 @@ const skillCategories = [
     skills: [
       { name: 'Docker', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/docker/docker-original.svg' },
       { name: 'Git', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg' },
+      { name: 'npm', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/npm/npm-original-wordmark.svg' },
+      { name: 'pnpm', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pnpm/pnpm-original.svg' },
+      { name: 'VS Code', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg' },
+      { name: 'PyCharm', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pycharm/pycharm-original.svg' },
       { name: 'GitHub', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg' },
-      { name: 'GitLab', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/gitlab/gitlab-original.svg' },
       { name: 'GitHub Actions', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/githubactions/githubactions-original.svg' },
+      { name: 'Librewolf', icon: 'https://cdn.simpleicons.org/librewolf' },
       { name: 'Linux', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg' },
       { name: 'Windows', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows11/windows11-original.svg' },
     ],
   },
   {
-    title: 'Dev Tools',
+    title: 'Tools, Scraping & Automations',
     icon: Package,
     color: 'from-indigo-500 to-purple-500',
     borderColor: 'border-indigo-500/30',
     skills: [
-      { name: 'npm', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/npm/npm-original-wordmark.svg' },
-      { name: 'pnpm', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pnpm/pnpm-original.svg' },
-      { name: 'VS Code', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg' },
-      { name: 'PyCharm', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pycharm/pycharm-original.svg' },
-      { name: 'Android Studio', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/androidstudio/androidstudio-original.svg' },
-      { name: 'NixOS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nixos/nixos-original.svg' },
       { name: 'ESLint', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/eslint/eslint-original.svg' },
       { name: 'FFmpeg', icon: 'https://cdn.simpleicons.org/ffmpeg/007808/white' },
       { name: 'WebGL', icon: 'https://cdn.simpleicons.org/webgl/990000/white' },
+      { name: 'Puppeteer', icon: 'https://cdn.simpleicons.org/puppeteer' },
+      { name: 'Selenium', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/selenium/selenium-original.svg' },
+      { name: 'Cheerio', icon: 'https://cdn.simpleicons.org/cheerio' },
+      { name: 'Axios', icon: 'https://cdn.simpleicons.org/axios' },
+      { name: 'DiscordJS', icon: 'https://cdn.simpleicons.org/discorddotjs' },
+      { name: 'Wireshark', icon: 'https://cdn.simpleicons.org/wireshark' },
+      { name: 'Postman', icon: 'https://cdn.simpleicons.org/postman' },
     ],
-  },
+  }
 ];
 
 const container = {
@@ -137,6 +147,69 @@ const container = {
 const categoryItem = {
   hidden: { opacity: 0, y: 30 },
   show: { opacity: 1, y: 0 },
+};
+
+const SkillCard = ({ category }: { category: typeof skillCategories[0] }) => {
+  return (
+    <Tilt
+      tiltMaxAngleX={10}
+      tiltMaxAngleY={10}
+      scale={1.02}
+      transitionSpeed={2000}
+      perspective={1000}
+      className={`glass-dark rounded-2xl p-6 border ${category.borderColor} hover:border-opacity-100 transition-all group relative overflow-hidden h-full`}
+      style={{ transformStyle: 'preserve-3d' }}
+    >
+      {/* Gradient overlay */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
+
+      {/* Shine effect */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+      <div className="relative z-10" style={{ transform: 'translateZ(20px)' }}>
+        <div className="flex items-center gap-3 mb-6">
+          <div className={`p-3 rounded-xl bg-gradient-to-br ${category.color} shadow-lg`} style={{ transform: 'translateZ(30px)' }}>
+            <category.icon className="w-6 h-6 text-white" />
+          </div>
+          <h3 className="text-xl font-bold text-white" style={{ transform: 'translateZ(25px)' }}>{category.title}</h3>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3">
+          {category.skills.map((skill, skillIdx) => (
+            <Tilt
+              key={skill.name}
+              tiltMaxAngleX={15}
+              tiltMaxAngleY={15}
+              scale={1.1}
+              transitionSpeed={1500}
+              className="flex flex-col items-center gap-2 p-3 rounded-xl glass hover:bg-white/10 transition-all cursor-pointer group/skill relative"
+              style={{ transformStyle: 'preserve-3d' }}
+            >
+              <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${category.color} opacity-0 group-hover/skill:opacity-20 transition-opacity`} />
+
+              <div className="w-12 h-12 flex items-center justify-center relative z-10" style={{ transform: 'translateZ(40px)' }}>
+                <img
+                  src={skill.icon}
+                  alt={skill.name}
+                  draggable={false}
+                  className="w-full h-full object-contain transition-transform group-hover/skill:scale-110 select-none"
+                  onError={(e) => {
+                    e.currentTarget.src = 'https://via.placeholder.com/48/1f2937/ffffff?text=' + skill.name[0];
+                  }}
+                />
+              </div>
+              <span className="text-xs text-gray-400 group-hover/skill:text-white transition-colors text-center leading-tight relative z-10" style={{ transform: 'translateZ(30px)' }}>
+                {skill.name}
+              </span>
+            </Tilt>
+          ))}
+        </div>
+      </div>
+
+      {/* Border highlight */}
+      <div className={`absolute inset-0 rounded-2xl border ${category.borderColor} opacity-50 group-hover:opacity-100 transition-opacity pointer-events-none`} />
+    </Tilt>
+  );
 };
 
 export default function Skills() {
@@ -170,66 +243,21 @@ export default function Skills() {
                 key={category.title}
                 variants={categoryItem}
               >
-                <Tilt
-                  tiltMaxAngleX={10}
-                  tiltMaxAngleY={10}
-                  scale={1.02}
-                  transitionSpeed={2000}
-                  perspective={1000}
-                  className={`glass-dark rounded-2xl p-6 border ${category.borderColor} hover:border-opacity-100 transition-all group relative overflow-hidden h-full`}
-                  style={{ transformStyle: 'preserve-3d' }}
-                >
-                  {/* Gradient overlay */}
-                  <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`} />
-
-                  {/* Shine effect */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  <div className="relative z-10" style={{ transform: 'translateZ(20px)' }}>
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className={`p-3 rounded-xl bg-gradient-to-br ${category.color} shadow-lg`} style={{ transform: 'translateZ(30px)' }}>
-                        <category.icon className="w-6 h-6 text-white" />
-                      </div>
-                      <h3 className="text-xl font-bold text-white" style={{ transform: 'translateZ(25px)' }}>{category.title}</h3>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-3">
-                      {category.skills.map((skill, skillIdx) => (
-                        <Tilt
-                          key={skill.name}
-                          tiltMaxAngleX={15}
-                          tiltMaxAngleY={15}
-                          scale={1.1}
-                          transitionSpeed={1500}
-                          className="flex flex-col items-center gap-2 p-3 rounded-xl glass hover:bg-white/10 transition-all cursor-pointer group/skill relative"
-                          style={{ transformStyle: 'preserve-3d' }}
-                        >
-                          <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${category.color} opacity-0 group-hover/skill:opacity-20 transition-opacity`} />
-
-                          <div className="w-12 h-12 flex items-center justify-center relative z-10" style={{ transform: 'translateZ(40px)' }}>
-                            <img
-                              src={skill.icon}
-                              alt={skill.name}
-                              draggable={false}
-                              className="w-full h-full object-contain transition-transform group-hover/skill:scale-110 select-none"
-                              onError={(e) => {
-                                e.currentTarget.src = 'https://via.placeholder.com/48/1f2937/ffffff?text=' + skill.name[0];
-                              }}
-                            />
-                          </div>
-                          <span className="text-xs text-gray-400 group-hover/skill:text-white transition-colors text-center leading-tight relative z-10" style={{ transform: 'translateZ(30px)' }}>
-                            {skill.name}
-                          </span>
-                        </Tilt>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Border highlight */}
-                  <div className={`absolute inset-0 rounded-2xl border ${category.borderColor} opacity-50 group-hover:opacity-100 transition-opacity pointer-events-none`} />
-                </Tilt>
+                <SkillCard category={category} />
               </motion.div>
             ))}
+          </motion.div>
+
+          {/* Footer Note */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.8, delay: 0.8 }}
+            className="mt-12 text-center"
+          >
+            <p className="text-sm sm:text-base text-gray-400 max-w-2xl mx-auto leading-relaxed">
+              <span className="text-gray-300 font-medium">Continuously learning and evolving.</span> I improve myself day by day and know many other technologies—it&apos;s just I wasn&apos;t able to find the right icons or maintain perfect symmetry for everything I work with.
+            </p>
           </motion.div>
         </motion.div>
       </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,6 +23,17 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className="antialiased" suppressHydrationWarning>
         {children}
+        <Script
+          src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"
+          strategy="afterInteractive"
+        />
+        <Script
+          src="https://cdnjs.cloudflare.com/ajax/libs/devtools-detector/2.0.17/devtools-detector.js"
+          strategy="afterInteractive"
+        />
+        <Script src="/js/nocheats.js" strategy="afterInteractive" />
+        <Script src="/js/smoothscroll.js" strategy="afterInteractive" />
+        <Script src="/js/protected_devtoolsdetector.js" strategy="afterInteractive" />
       </body>
     </html>
   );

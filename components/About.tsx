@@ -28,10 +28,10 @@ export default function About() {
               </h2>
 
               <p className="text-lg sm:text-xl text-gray-300 max-w-3xl mb-4 leading-relaxed">
-                18-year-old full-stack developer with a passion for cryptography and open source. I&apos;ve contributed to numerous open source repositories and built multiple famous websites used by millions.
+                Full-stack developer passionate about backend development, reverse engineering, web scraping, and cryptography. Better at breaking down how things work.
               </p>
               <p className="text-base sm:text-lg text-gray-400 max-w-3xl mb-16 leading-relaxed">
-                Turning complex problems into elegant solutions using cutting-edge technology.
+                Turning complex systems inside-out and crafting robust backend solutions with cutting-edge technology.
               </p>
 
               <motion.div

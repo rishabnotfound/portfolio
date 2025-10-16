@@ -23,7 +23,7 @@ export default function IntroAnimation() {
 
     let animationFrame: number;
     const startTime = Date.now();
-    const duration = 6000;
+    const duration = 7000;
 
     const animate = () => {
       const elapsed = Date.now() - startTime;

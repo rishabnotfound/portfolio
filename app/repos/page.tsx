@@ -91,21 +91,6 @@ export default function ReposPage() {
       <Navigation />
       <main className="min-h-screen pt-24 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-12"
-        >
-
-
-          <h1 className="text-5xl sm:text-6xl font-bold mb-4">
-            <span className="gradient-text">All Repositories</span>
-          </h1>
-          <p className="text-lg text-gray-400">
-            Explore all my projects on GitHub
-          </p>
-        </motion.div>
 
         {/* Search and Filter */}
         <motion.div
@@ -116,13 +101,13 @@ export default function ReposPage() {
         >
           {/* Search Bar */}
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none z-10" />
             <input
               type="text"
               placeholder="Search repositories..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 glass-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-500"
+              className="w-full pl-12 pr-4 py-4 glass-dark rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-white placeholder-gray-500 relative"
             />
           </div>
 

@@ -57,7 +57,7 @@ export default function Hero() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.5 }}
             >
-              18-year-old Full Stack Developer & Cryptography Enthusiast
+              Full-Stack Developer | Backend Specialist | Reverse Engineer
             </motion.p>
 
             <motion.div
@@ -66,9 +66,9 @@ export default function Hero() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
-              <p>• Contributing to open source</p>
-              <p>• Building famous websites</p>
-              <p>• Crafting exceptional digital experiences</p>
+              <p>• Breaking down complex systems</p>
+              <p>• Web scraping & automation</p>
+              <p>• Cryptography & security</p>
             </motion.div>
 
             <motion.div

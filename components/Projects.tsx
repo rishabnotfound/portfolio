@@ -84,7 +84,7 @@ export default function Projects() {
           </h2>
 
           <p className="text-lg sm:text-xl text-gray-300 text-center max-w-3xl mx-auto mb-16">
-            Check out some of my latest work. Each project showcases different skills and technologies.
+            Explore my projects featuring backend systems, automation tools, and complex integrations.
           </p>
 
           {loading ? (
