@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
+import AnimatedBackground from "@/components/AnimatedBackground";
+import GlobalGridBackground from "@/components/GlobalGridBackground";
+import ScrollIndicator from '@/components/scroll_indicator';
 
 export const metadata: Metadata = {
   title: "Rishab - Full Stack Developer Portfolio",
@@ -21,7 +24,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/nobg.png" sizes="any" />
+      </head>
       <body className="antialiased" suppressHydrationWarning>
+        <ScrollIndicator />
+        <AnimatedBackground />
+        <GlobalGridBackground />
         {children}
         <Script
           src="https://cdn.jsdelivr.net/npm/disable-devtool@latest"

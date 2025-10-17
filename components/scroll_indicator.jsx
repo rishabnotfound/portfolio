@@ -27,21 +27,21 @@ const ScrollIndicator = () => {
   }, []);
 
   return (
-    <div 
-      className={`fixed bottom-4 right-4 z-50 transition-all duration-500 
-      ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'} 
+    <div
+      className={`fixed bottom-4 right-4 z-50 transition-all duration-500
+      ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-50 pointer-events-none'}
       md:flex hidden`} // Hidden on mobile, visible on desktop (md and above)
     >
       <svg className="w-12 h-12" viewBox="0 0 100 100">
         {/* Outer gray border */}
-        <rect 
-          x="5" 
-          y="5" 
-          width="90" 
-          height="90" 
-          stroke="#ccc" 
-          opacity="0.2" 
-          strokeWidth="2" 
+        <rect
+          x="5"
+          y="5"
+          width="90"
+          height="90"
+          stroke="#ccc"
+          opacity="0.2"
+          strokeWidth="2"
           fill="none"
         />
         {/* Red gradient progress bar */}
@@ -59,7 +59,11 @@ const ScrollIndicator = () => {
           stroke="url(#redGradient)"
           strokeWidth="2"
           fill="none"
-          style={{ strokeDasharray: 360, strokeDashoffset: strokeOffset }}
+          style={{
+            strokeDasharray: 360,
+            strokeDashoffset: strokeOffset,
+            transition: 'none'
+          }}
         />
       </svg>
 

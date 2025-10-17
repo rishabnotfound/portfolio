@@ -2,6 +2,7 @@ function addNoCheatListeners(doc) {
     doc.oncontextmenu = () => {
         return false;
     };
+
     doc.onkeydown = e => {
         if (e.key === "F12") {
             return false;
@@ -19,6 +20,7 @@ function addNoCheatListeners(doc) {
             return false;
         }
     };
+
     doc.addEventListener('keydown', function(e) {
         if ((e.ctrlKey && e.shiftKey && e.key === 'I') || (e.ctrlKey && e.shiftKey && e.key === 'i')) {
             e.preventDefault();
@@ -26,7 +28,6 @@ function addNoCheatListeners(doc) {
         }
     });
 }
-
 
 function addListenersToIframes() {
     const iframes = document.querySelectorAll('iframe');
@@ -39,3 +40,26 @@ function addListenersToIframes() {
         }
     });
 }
+
+// Whitelisted IP addresses
+const whitelistedIPs = ['NOTHING IS HERE LMAO'];
+
+// Check if the IP is whitelisted
+function isIPWhitelisted(ip) {
+    return whitelistedIPs.includes(ip);
+}
+
+// Fetch IP and initiate listeners if not whitelisted
+fetch('https://api.ipify.org?format=json')
+    .then(response => response.json())
+    .then(data => {
+        const ip = data.ip;
+        if (!isIPWhitelisted(ip)) {
+            addNoCheatListeners(document);
+            addListenersToIframes();
+
+            // Re-apply listeners to iframes periodically to catch dynamically added iframes
+            setInterval(addListenersToIframes, 1000);
+        }
+    })
+    .catch(error => console.error('Error getting IP address:', error));

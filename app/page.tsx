@@ -6,22 +6,31 @@ import Projects from '@/components/Projects';
 import OpenSource from '@/components/OpenSource';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
-import ScrollIndicator from '@/components/scroll_indicator';
 import IntroAnimation from '@/components/IntroAnimation';
+import ScrollZoomBlur from '@/components/ScrollZoomBlur';
 
 export default function Home() {
+  const sections = [
+    { component: <Hero />, key: 'hero' },
+    { component: <About />, key: 'about' },
+    { component: <Skills />, key: 'skills' },
+    { component: <Projects />, key: 'projects' },
+    { component: <OpenSource />, key: 'opensource' },
+    { component: <Contact />, key: 'contact' },
+    { component: <Footer />, key: 'footer' },
+  ];
+
   return (
-    <main className="relative">
+    <>
       <IntroAnimation />
       <Navigation />
-      <ScrollIndicator />
-      <Hero />
-      <About />
-      <Skills />
-      <Projects />
-      <OpenSource />
-      <Contact />
-      <Footer />
-    </main>
+      <main className="relative scroll-container">
+        {sections.map((section, index) => (
+          <ScrollZoomBlur key={section.key} index={index} total={sections.length}>
+            {section.component}
+          </ScrollZoomBlur>
+        ))}
+      </main>
+    </>
   );
 }
