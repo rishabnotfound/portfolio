@@ -230,8 +230,6 @@ cd portfolio
 2. **Install dependencies**
 ```bash
 npm install
-# or
-pnpm install
 ```
 
 3. **Create environment file**
@@ -307,19 +305,6 @@ The production server runs on port 3011 by default (configured in `package.json`
 3. Build output directory: `.next`
 4. Add environment variables
 5. Deploy
-
-### Docker
-
-```bash
-# Build image
-docker build -t portfolio .
-
-# Run container
-docker run -p 3011:3011 \
-  -e DISCORD_BOT_TOKEN=your_token \
-  -e GITHUB_TOKEN=your_token \
-  portfolio
-```
 
 ## API Routes
 
@@ -423,4 +408,4 @@ MIT License - feel free to use this template for your own portfolio!
 
 ---
 
-Made with by R
+Made with ❤️ by R
