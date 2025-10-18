@@ -124,19 +124,6 @@ button, a {
   transition: all 0.3s ease;
 }
 
-/* Neon glow effect */
-.neon-glow {
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5),
-              0 0 20px rgba(239, 68, 68, 0.3),
-              0 0 30px rgba(239, 68, 68, 0.2);
-}
-
-.neon-glow:hover {
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.8),
-              0 0 30px rgba(239, 68, 68, 0.5),
-              0 0 40px rgba(239, 68, 68, 0.3);
-}
-
 /* 3D Perspective */
 .perspective-1000 {
   perspective: 1000px;

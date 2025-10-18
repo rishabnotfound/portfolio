@@ -82,7 +82,7 @@ export default function Hero() {
                 draggable={false}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="glass p-3 rounded-full hover:bg-red-500/20 transition-all neon-glow group"
+                className="glass p-3 rounded-full hover:bg-red-500/20 transition-all group"
               >
                 <Github className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </a>
@@ -91,7 +91,7 @@ export default function Hero() {
                 draggable={false}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="glass p-3 rounded-full hover:bg-yellow-500/20 transition-all neon-glow group"
+                className="glass p-3 rounded-full hover:bg-yellow-500/20 transition-all group"
               >
                 <Linkedin className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </a>
@@ -100,14 +100,14 @@ export default function Hero() {
                 draggable={false}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="glass p-3 rounded-full hover:bg-yellow-500/20 transition-all neon-glow group"
+                className="glass p-3 rounded-full hover:bg-yellow-500/20 transition-all group"
               >
                 <Instagram className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </a>
               <a
                 href={`mailto:${contact_mail}`}
                 draggable={false}
-                className="glass p-3 rounded-full hover:bg-pink-500/20 transition-all neon-glow group"
+                className="glass p-3 rounded-full hover:bg-pink-500/20 transition-all group"
               >
                 <Mail className="w-5 h-5 group-hover:scale-110 transition-transform" />
               </a>
@@ -121,7 +121,7 @@ export default function Hero() {
             >
               <button
                 onClick={() => scrollToSection('projects')}
-                className="px-8 py-3 bg-gradient-to-r from-red-500 to-red-600 rounded-full font-semibold hover:scale-105 transition-all neon-glow"
+                className="px-8 py-3 bg-gradient-to-r from-red-500 to-red-600 rounded-full font-semibold hover:scale-105 transition-all"
               >
                 View My Work
               </button>
