@@ -10,7 +10,6 @@ A stunning, feature-rich modern portfolio website built with Next.js 15, featuri
 - **Intro Animation**: Cinematic "WELCOME" zoom animation with canvas rendering on page load
 - **Scroll Effects**: Zoom and blur effects on scroll with smooth transitions using Framer Motion
 - **Scroll Indicator**: Custom scroll progress indicator
-- **Global Grid Background**: Animated grid background with gradient overlays
 - **Parallax Effects**: Multi-layered parallax backgrounds for depth
 - **3D Tilt Cards**: Interactive tilt effects on project and skill cards using `react-parallax-tilt`
 
@@ -34,15 +33,7 @@ A stunning, feature-rich modern portfolio website built with Next.js 15, featuri
   - Uses Lanyard API for presence data
 
 ### Skills Section
-- **8 Skill Categories** with 50+ technologies:
-  - Languages (JavaScript, TypeScript, Python, Go, PHP, Lua, YAML)
-  - Frontend Frameworks (React, Next.js, Vue.js, Nuxt.js, Three.js, Framer Motion, jQuery, Vite)
-  - Styling (HTML5, CSS3, Tailwind CSS, SASS, PostCSS)
-  - Backend & APIs (Node.js, Express, Socket.io, Nginx, REST API, JWT)
-  - Databases (MongoDB, MySQL, Prisma, Firebase)
-  - Cloud & Hosting (Google Cloud, VPS, Vercel, Cloudflare, Netlify, GitHub Pages, Replit, Glitch, CodePen)
-  - DevOps & Tools (Docker, Git, npm, pnpm, VS Code, PyCharm, GitHub Actions, Linux, Windows)
-  - Scraping & Automation (Puppeteer, Selenium, Cheerio, Axios, DiscordJS, Wireshark, Postman, FFmpeg)
+- **CONFIGURABLE**
 - **Interactive 3D Tilt Cards** for each skill category
 - **Icon Display** for each individual technology with hover effects
 
@@ -59,24 +50,12 @@ A stunning, feature-rich modern portfolio website built with Next.js 15, featuri
 
 ### Open Source Section
 - **Contribution Showcase**: Displays open-source contributions
-  - Node.js contributions
-  - PreMiD Activities
-  - FMHY Edit project
+  - CONFIGURABLE
 - **PR Links**: Direct links to pull requests
 
 ### Contact Section
 - **Contact Information**: Email and social media links
 - **Footer**: Copyright and attribution
-
-### Additional Features
-- **SEO Optimized**: Metadata for Open Graph and social sharing
-- **Custom 404 Page**: Stylized not-found page
-- **Loading States**: Skeleton loaders for async data
-- **Error Handling**: Graceful error handling for API failures
-- **Anti-DevTools Protection**: Scripts to detect and prevent DevTools usage (nocheats.js, devtools-detector)
-- **Smooth Scrolling**: Enhanced scroll behavior
-- **Image Optimization**: Next.js Image component with remote patterns
-- **TypeScript**: Full type safety throughout the application
 
 ## Tech Stack
 
@@ -102,7 +81,7 @@ A stunning, feature-rich modern portfolio website built with Next.js 15, featuri
   - LeetCode GraphQL API (user stats, problem counts)
 
 ### DevOps & Tooling
-- **Package Manager**: npm/pnpm
+- **Package Manager**: npm
 - **Linting**: ESLint 9.13.0
 - **CSS Processing**: PostCSS 8.4.47, Autoprefixer 10.4.20
 
@@ -199,18 +178,6 @@ export const openSourceContributions = [
 ];
 ```
 
-### Image Remote Patterns (`next.config.mjs`)
-
-The following remote image sources are configured:
-- `avatars.githubusercontent.com` - GitHub avatars
-- `raw.githubusercontent.com` - GitHub raw content
-- `cdn.discordapp.com` - Discord CDN
-- `media.discordapp.net` - Discord media
-- `github.com` - GitHub assets
-- `fmhy.net` - FMHY assets
-
-Add more if needed in `next.config.mjs`.
-
 ## Installation
 
 ### Prerequisites
@@ -298,14 +265,6 @@ The production server runs on port 3011 by default (configured in `package.json`
 6. Run with PM2 or systemd: `npm start`
 7. Configure Nginx as reverse proxy
 
-### Cloudflare Pages
-
-1. Connect GitHub repository
-2. Build command: `npm run build`
-3. Build output directory: `.next`
-4. Add environment variables
-5. Deploy
-
 ## API Routes
 
 The portfolio includes several API endpoints:
@@ -338,7 +297,6 @@ portfolio/
 │   ├── DiscordProfile.tsx      # Discord profile card
 │   ├── DynamicStats.tsx        # Live stats component
 │   ├── Footer.tsx              # Footer component
-│   ├── GlobalGridBackground.tsx # Global grid overlay
 │   ├── Hero.tsx                # Hero section
 │   ├── IntroAnimation.tsx      # Welcome animation
 │   ├── Navigation.tsx          # Navigation bar
@@ -354,30 +312,13 @@ portfolio/
 │   ├── js/                     # Client-side scripts
 │   ├── resume/                 # Resume files
 │   ├── logo.png                # Logo
-│   └── nobg.png                # Favicon
+│   └── nobg.png                # Logo
 ├── config.js                   # Main configuration
 ├── next.config.mjs             # Next.js configuration
 ├── tailwind.config.ts          # Tailwind CSS configuration
 ├── .env                        # Environment variables
 └── package.json                # Dependencies
 ```
-
-## Performance Optimizations
-
-- **Next.js 15**: Latest framework with improved performance
-- **Image Optimization**: Automatic image optimization with Next.js Image
-- **Code Splitting**: Automatic code splitting per route
-- **Lazy Loading**: Components loaded on demand
-- **Static Generation**: Pre-rendered pages where possible
-- **API Caching**: Revalidation strategies for API routes (3600s for GitHub, 10800s for Discord)
-- **WebGL Optimizations**: Efficient Three.js rendering
-
-## Browser Support
-
-- Chrome/Edge (latest)
-- Firefox (latest)
-- Safari (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
 
 ## Troubleshooting
 
@@ -404,7 +345,6 @@ MIT License - feel free to use this template for your own portfolio!
 ## Author
 
 **R** (rishabnotfound)
-- Portfolio: Built with Next.js 15
 
 ---
 
