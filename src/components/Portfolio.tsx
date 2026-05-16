@@ -1,0 +1,1037 @@
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import { Link } from "wouter";
+import { Code, MessageCircle, Github, Instagram, Linkedin, ExternalLink, ArrowRight, Star } from "lucide-react";
+import { usePageMeta } from "../lib/seo";
+import { GH_USER, LANG_COLORS, fetchReadmePreview, timeAgo, type Repo } from "../lib/github";
+import { SKILLS, CATEGORIES, type SkillCategory } from "../lib/skills";
+import "./portfolio.css";
+
+const MARQUEE_ITEMS = [
+  "FULL-STACK DEVELOPER","BACKEND SPECIALIST","REVERSE ENGINEER","OPEN SOURCE CONTRIBUTOR","HLS PROXY SYSTEMS",
+  "WEB SCRAPING & AUTOMATION","CRYPTOGRAPHY & SECURITY","CORE ONLINE",
+  "FULL-STACK DEVELOPER","BACKEND SPECIALIST","REVERSE ENGINEER","OPEN SOURCE CONTRIBUTOR","HLS PROXY SYSTEMS",
+  "WEB SCRAPING & AUTOMATION","CRYPTOGRAPHY & SECURITY","CORE ONLINE",
+];
+
+const MINI_MARQUEE = [
+  "FULL-STACK DEVELOPER","BACKEND SPECIALIST","REVERSE ENGINEER","OPEN SOURCE","CRYPTOGRAPHY","CORE ONLINE",
+  "FULL-STACK DEVELOPER","BACKEND SPECIALIST","REVERSE ENGINEER","OPEN SOURCE","CRYPTOGRAPHY","CORE ONLINE",
+];
+
+const TONE_CYCLE = ["cyan", "red", "gold", "violet", "steel"] as const;
+
+const TERMINAL_LINES = [
+  "rishab.dev/init --mode production",
+  "reverse.engineering.mode: active",
+  "web.scraping.engine: ready",
+  "crypto.toolkit.sync: operational",
+  "open.source.prs.merged: 3 ✓",
+];
+
+const OSS_PRS = [
+  { project: "Node.js", desc: "Removed unreachable conditionals in kFinishClose", pr: "#60235", url: "https://github.com/nodejs/node/pull/60235" },
+  { project: "PreMiD Activities", desc: "Added new presence integration for Discord Rich Presence", pr: "#9391", url: "https://github.com/PreMiD/Activities/pull/9391" },
+  { project: "FMHY", desc: "Added PWA Support to FreeMediaHeckYeah community project", pr: "#4094", url: "https://github.com/fmhy/edit/pull/4094" },
+];
+
+function useCounter(target: number, suffix: string, isVisible: boolean): string {
+  const [val, setVal] = useState("0" + suffix);
+  const started = useRef(false);
+  useEffect(() => {
+    if (!isVisible || started.current) return;
+    started.current = true;
+    const duration = 1800;
+    let startTs: number | null = null;
+    let raf: number;
+    function step(ts: number) {
+      if (!startTs) startTs = ts;
+      const p = Math.min((ts - startTs) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setVal(Math.round(eased * target) + suffix);
+      if (p < 1) raf = requestAnimationFrame(step);
+    }
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [isVisible, target, suffix]);
+  return val;
+}
+
+function MetricCard({ value, label, delay = 0 }: { value: string; label: string; delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+
+  const numMatch = value.match(/^(\d+)(.*)$/);
+  const num = numMatch ? parseInt(numMatch[1]) : 0;
+  const suffix = numMatch ? numMatch[2] : "";
+  const isStatic = !numMatch;
+  const counted = useCounter(num, suffix, visible);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setTimeout(() => { setVisible(true); setRevealed(true); }, delay);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.4 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [delay]);
+
+  return (
+    <div
+      ref={ref}
+      className="pf-metric-card"
+      style={{
+        opacity: revealed ? 1 : 0,
+        transform: revealed ? "translateY(0)" : "translateY(32px)",
+        transition: `opacity 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}ms, transform 0.75s cubic-bezier(0.16,1,0.3,1) ${delay}ms`,
+      }}
+    >
+      <span className="pf-metric-value">{isStatic ? value : counted}</span>
+      <span className="pf-metric-label">{label}</span>
+    </div>
+  );
+}
+
+function ProjectShowcase() {
+  const showcaseRef = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const state = useRef({ y: 0, curY: 0, raf: 0 });
+
+  const [repos, setRepos] = useState<Repo[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [hovered, setHovered] = useState<Repo | null>(null);
+  const [previewImg, setPreviewImg] = useState<string | null>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/gh/users/${GH_USER}/repos?per_page=100&sort=updated`)
+      .then(async (r) => { if (!r.ok) throw new Error(`GitHub ${r.status}`); return r.json(); })
+      .then((data: Repo[]) => {
+        if (cancelled) return;
+        const filtered = data
+          .filter((r) => !r.fork && !r.archived && !r.private)
+          .sort((a, b) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime())
+          .slice(0, 5);
+        setRepos(filtered);
+      })
+      .catch((err) => { if (!cancelled) setError(String(err.message || err)); });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    function animate() {
+      state.current.curY += (state.current.y - state.current.curY) * 0.11;
+      if (previewRef.current) previewRef.current.style.transform = `translateY(${state.current.curY}px)`;
+      state.current.raf = requestAnimationFrame(animate);
+    }
+    state.current.raf = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(state.current.raf);
+  }, []);
+
+  function onMouseMove(e: React.MouseEvent) {
+    const rect = showcaseRef.current!.getBoundingClientRect();
+    state.current.y = e.clientY - rect.top - 120;
+  }
+
+  async function onRowEnter(repo: Repo) {
+    if (previewRef.current) previewRef.current.classList.add("is-visible");
+    setHovered(repo);
+    setPreviewImg(null);
+    setPreviewLoading(true);
+    const img = await fetchReadmePreview(repo);
+    setPreviewLoading(false);
+    setHovered((current) => {
+      if (current && current.name === repo.name) setPreviewImg(img);
+      return current;
+    });
+  }
+
+  function onRowLeave() {
+    if (previewRef.current) previewRef.current.classList.remove("is-visible");
+  }
+
+  return (
+    <div className="pf-project-showcase" ref={showcaseRef} onMouseMove={onMouseMove}>
+      <div ref={previewRef} className="pf-hover-preview">
+        <div className="pf-project-artwork" data-tone={hovered ? TONE_CYCLE[((repos || []).findIndex((r) => r.name === hovered.name) || 0) % TONE_CYCLE.length] : "cyan"}>
+          {previewImg ? (
+            <img src={previewImg} alt={hovered?.name || ""} className="pf-hover-preview-img" draggable={false} />
+          ) : (
+            <>
+              <div className="pf-art-grid" />
+              <div className="pf-art-sigil">
+                <span>{previewLoading ? "…" : hovered ? String((repos || []).findIndex((r) => r.name === hovered.name) + 1).padStart(2, "0") : "01"}</span>
+              </div>
+              <div className="pf-art-lines"><span /><span /><span /></div>
+            </>
+          )}
+          <p className="pf-art-label">{hovered ? hovered.name : ""}</p>
+        </div>
+      </div>
+
+      <div className="pf-project-list">
+        {error && !repos && <p className="pf-repo-loading">⚠ {error}</p>}
+        {!error && !repos && <p className="pf-repo-loading">SYNCING WITH GITHUB…</p>}
+        {repos && repos.length === 0 && <p className="pf-repo-loading">No repositories found.</p>}
+        {repos && repos.map((p, i) => {
+          const tone = TONE_CYCLE[i % TONE_CYCLE.length];
+          const index = String(i + 1).padStart(2, "0");
+          const tags = (p.topics || []).slice(0, 3);
+          if (tags.length === 0 && p.language) tags.push(p.language);
+          return (
+            <article
+              key={p.id}
+              className="pf-project-row"
+              data-tone={tone}
+              data-reveal="true"
+              style={{ transitionDelay: `${i * 0.08}s` }}
+              onMouseEnter={() => onRowEnter(p)}
+              onMouseLeave={onRowLeave}
+            >
+              <span className="pf-project-index">{index}</span>
+              <div className="pf-project-main">
+                <span className="pf-project-eyebrow">{p.language || "Repository"} · {timeAgo(p.pushed_at)}</span>
+                <h3>{p.name}</h3>
+                <p>{p.description || "No description provided."}</p>
+              </div>
+              <div className="pf-project-tags">
+                {tags.map((t) => <span key={t}>{t}</span>)}
+                <span className="pf-project-stars"><Star size={12} aria-hidden="true" /> {p.stargazers_count}</span>
+              </div>
+              <a
+                href={p.html_url}
+                target="_blank"
+                rel="noreferrer"
+                className="pf-project-icon"
+                onClick={(e) => e.stopPropagation()}
+                aria-label={`Open ${p.name} on GitHub`}
+                data-cursor-link
+              >
+                <ExternalLink size={18} />
+              </a>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function SkillCarousel() {
+  const [filter, setFilter] = useState<SkillCategory | "All">("All");
+  const filtered = filter === "All" ? SKILLS : SKILLS.filter((s) => s.category === filter);
+  const loop = [...filtered, ...filtered];
+
+  return (
+    <div className="pf-skill-deck">
+      <div className="pf-skill-filters" data-reveal="true">
+        {(["All", ...CATEGORIES] as const).map((c) => (
+          <button
+            key={c}
+            type="button"
+            className={`pf-skill-filter${filter === c ? " is-active" : ""}`}
+            onClick={() => setFilter(c)}
+            data-cursor-link
+          >
+            {c}
+          </button>
+        ))}
+      </div>
+      <div className="pf-skill-carousel" data-reveal="true">
+        <div className="pf-skill-carousel-track" key={filter}>
+          {loop.map((s, i) => (
+            <div key={`${s.name}-${i}`} className="pf-skill-chip" title={s.name}>
+              <div className="pf-skill-chip-icon">
+                <img
+                  src={s.icon}
+                  alt={s.name}
+                  draggable={false}
+                  loading="lazy"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.opacity = "0.25";
+                  }}
+                />
+              </div>
+              <span className="pf-skill-chip-name">{s.name}</span>
+              <span className="pf-skill-chip-cat">{s.category}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="pf-skill-carousel pf-skill-carousel-reverse" data-reveal="true" aria-hidden="true">
+        <div className="pf-skill-carousel-track pf-skill-carousel-track-reverse" key={`r-${filter}`}>
+          {[...loop].reverse().map((s, i) => (
+            <div key={`r-${s.name}-${i}`} className="pf-skill-chip pf-skill-chip-mini">
+              <div className="pf-skill-chip-icon">
+                <img
+                  src={s.icon}
+                  alt=""
+                  draggable={false}
+                  loading="lazy"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.opacity = "0.25";
+                  }}
+                />
+              </div>
+              <span className="pf-skill-chip-name">{s.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+type LangBucket = { name: string; count: number; bytes: number; color: string };
+
+function LanguageStats() {
+  const [buckets, setBuckets] = useState<LangBucket[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/gh/users/${GH_USER}/repos?per_page=100&sort=updated`)
+      .then((r) => r.json())
+      .then((data: Repo[]) => {
+        if (cancelled || !Array.isArray(data)) return;
+        const tally = new Map<string, number>();
+        data
+          .filter((r) => !r.fork && !r.archived && !r.private && r.language)
+          .forEach((r) => tally.set(r.language!, (tally.get(r.language!) || 0) + 1));
+        const sorted = Array.from(tally.entries())
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 8)
+          .map(([name, count]) => ({
+            name,
+            count,
+            bytes: count,
+            color: LANG_COLORS[name] || "#f4efe8",
+          }));
+        setBuckets(sorted);
+      })
+      .catch(() => { if (!cancelled) setBuckets([]); });
+    return () => { cancelled = true; };
+  }, []);
+
+  const total = (buckets || []).reduce((s, b) => s + b.count, 0) || 1;
+
+  return (
+    <div className="pf-lang-stats" data-reveal="true">
+      <div className="pf-lang-stats-head">
+        <span className="pf-lang-stats-meta">{buckets ? `${buckets.length} languages · ${total} repos` : "SYNCING…"}</span>
+      </div>
+      <div className="pf-lang-stats-bar">
+        {(buckets || []).map((b) => (
+          <span
+            key={b.name}
+            className="pf-lang-stats-bar-seg"
+            style={{ width: `${(b.count / total) * 100}%`, background: b.color }}
+            title={`${b.name} — ${b.count} repos`}
+          />
+        ))}
+      </div>
+      <div className="pf-lang-stats-list">
+        {(buckets || []).map((b) => (
+          <div key={b.name} className="pf-lang-stats-row">
+            <span className="pf-lang-stats-dot" style={{ background: b.color }} />
+            <span className="pf-lang-stats-name">{b.name}</span>
+            <span className="pf-lang-stats-count">{b.count}</span>
+            <span className="pf-lang-stats-pct">{Math.round((b.count / total) * 100)}%</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Terminal() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [revealed, setRevealed] = useState<boolean[]>(Array(TERMINAL_LINES.length).fill(false));
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          TERMINAL_LINES.forEach((_, i) => {
+            setTimeout(() => {
+              setRevealed((prev) => { const n = [...prev]; n[i] = true; return n; });
+            }, 120 + i * 160);
+          });
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className="pf-terminal-panel" data-reveal="true">
+      <div className="pf-terminal-topline">
+        <Code size={16} aria-hidden="true" />
+        <span>RISHAB_CONSOLE</span>
+      </div>
+      <div className="pf-terminal-lines">
+        {TERMINAL_LINES.map((line, i) => (
+          <span key={i} className={`pf-terminal-line${revealed[i] ? " is-visible" : ""}`}>
+            {line}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Preloader({ onDone }: { onDone: () => void }) {
+  const [pct, setPct] = useState(0);
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    let start: number | null = null;
+    const duration = 1400;
+    let raf: number;
+    function step(ts: number) {
+      if (!start) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
+      const eased = progress < 0.5 ? 2 * progress * progress : -1 + (4 - 2 * progress) * progress;
+      setPct(Math.round(eased * 100));
+      if (progress < 1) { raf = requestAnimationFrame(step); }
+      else { setTimeout(() => { setDone(true); setTimeout(onDone, 700); }, 200); }
+    }
+    raf = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(raf);
+  }, [onDone]);
+
+  return (
+    <div className={`pf-preloader${done ? " is-done" : ""}`}>
+      <div className="pf-preloader-panel pf-preloader-panel-left" />
+      <div className="pf-preloader-panel pf-preloader-panel-right" />
+      <div className="pf-preloader-grid" />
+      <div className="pf-preloader-grain" />
+      <div className="pf-preloader-scan" />
+      <div className="pf-preloader-accent pf-preloader-accent-red" />
+      <div className="pf-preloader-accent pf-preloader-accent-cyan" />
+      <div className="pf-preloader-content">
+        <div className="pf-preloader-meta">
+          <span>FULL-STACK DEVELOPER</span>
+          <span>BACKEND SPECIALIST</span>
+        </div>
+        <div className="pf-preloader-brand-wrap">
+          <div className="pf-preloader-brand">RISHAB</div>
+        </div>
+        <div className="pf-preloader-meta" style={{ flexDirection: "column" as const, alignItems: "flex-end" }}>
+          <span>DELHI, INDIA</span>
+          <span>ONLINE</span>
+        </div>
+        <div className="pf-preloader-status-row">
+          <span>INITIALIZING CORE</span>
+          <span className="pf-preloader-percentage">{String(pct).padStart(3, "0")}%</span>
+        </div>
+        <div className="pf-preloader-mini-marquee">
+          <div className="pf-preloader-mini-marquee-inner">
+            {MINI_MARQUEE.map((s, i) => <span key={i}>{s}</span>)}
+          </div>
+        </div>
+        <div className="pf-preloader-progress-bottom">
+          <div className="pf-preloader-progress-fill" style={{ width: `${pct}%` }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function Cursor() {
+  const glowRef = useRef<HTMLDivElement>(null);
+  const scopeRef = useRef<HTMLDivElement>(null);
+  const dotRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const gx = { cur: -100, target: -100 };
+    const gy = { cur: -100, target: -100 };
+    let raf: number;
+
+    function move(e: MouseEvent) {
+      gx.target = e.clientX; gy.target = e.clientY;
+      const s = `translateX(${e.clientX}px) translateY(${e.clientY}px)`;
+      if (scopeRef.current) scopeRef.current.style.transform = s;
+      if (dotRef.current) dotRef.current.style.transform = s;
+    }
+
+    function animate() {
+      gx.cur += (gx.target - gx.cur) * 0.14;
+      gy.cur += (gy.target - gy.cur) * 0.14;
+      if (glowRef.current) glowRef.current.style.transform = `translateX(${gx.cur}px) translateY(${gy.cur}px)`;
+      raf = requestAnimationFrame(animate);
+    }
+
+    function onOver(e: MouseEvent) {
+      if ((e.target as Element).closest("a,button,[data-cursor-link]") && glowRef.current)
+        glowRef.current.classList.add("is-link");
+    }
+    function onOut(e: MouseEvent) {
+      if ((e.target as Element).closest("a,button,[data-cursor-link]") && glowRef.current)
+        glowRef.current.classList.remove("is-link");
+    }
+
+    window.addEventListener("mousemove", move, { passive: true });
+    document.addEventListener("mouseover", onOver);
+    document.addEventListener("mouseout", onOut);
+    raf = requestAnimationFrame(animate);
+
+    return () => {
+      window.removeEventListener("mousemove", move);
+      document.removeEventListener("mouseover", onOver);
+      document.removeEventListener("mouseout", onOut);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return (
+    <>
+      <div ref={glowRef} className="pf-cursor-glow" style={{ transform: "translateX(-100px) translateY(-100px)" }} />
+      <div ref={scopeRef} className="pf-cursor-scope" style={{ transform: "translateX(-100px) translateY(-100px)" }}>
+        <span className="pf-cursor-scope-ring" />
+        <span className="pf-cursor-scope-core" />
+        <span className="pf-cursor-scope-line pf-cursor-scope-line-x" />
+        <span className="pf-cursor-scope-line pf-cursor-scope-line-y" />
+        <span className="pf-cursor-blade pf-cursor-blade-a" />
+        <span className="pf-cursor-blade pf-cursor-blade-b" />
+      </div>
+      <div ref={dotRef} className="pf-cursor-dot" style={{ transform: "translateX(-100px) translateY(-100px)" }} />
+    </>
+  );
+}
+
+type DiscordActivity = {
+  id?: string; name: string; type: number; state?: string; details?: string; application_id?: string;
+  timestamps?: { start?: number; end?: number };
+  assets?: { large_image?: string; large_text?: string; small_image?: string; small_text?: string };
+};
+type LanyardData = {
+  discord_user: { id: string; username: string; global_name: string | null; avatar: string | null; discriminator: string };
+  discord_status: "online" | "idle" | "dnd" | "offline";
+  activities: DiscordActivity[];
+  listening_to_spotify: boolean;
+  spotify: { track_id: string; timestamps: { start: number; end: number }; album: string; album_art_url: string; artist: string; song: string } | null;
+};
+
+const DISCORD_USER_ID = "1141729666160402565";
+const LEETCODE_USERNAME = "rishabnotfound";
+const STATUS_COLORS: Record<string, string> = {
+  online: "#23a55a", idle: "#f0b232", dnd: "#f23f43", offline: "#80848e",
+};
+const STATUS_LABELS: Record<string, string> = {
+  online: "ONLINE", idle: "IDLE", dnd: "DO NOT DISTURB", offline: "OFFLINE",
+};
+
+function resolveDiscordAsset(asset: string, applicationId?: string) {
+  if (!asset) return "";
+  if (asset.startsWith("mp:")) return asset.replace("mp:", "https://media.discordapp.net/");
+  if (asset.startsWith("spotify:")) return `https://i.scdn.co/image/${asset.split(":")[1]}`;
+  return `https://cdn.discordapp.com/app-assets/${applicationId || ""}/${asset}.png`;
+}
+
+function activityLabel(type: number) {
+  switch (type) {
+    case 0: return "Playing"; case 1: return "Streaming"; case 2: return "Listening to";
+    case 3: return "Watching"; case 4: return "Custom Status"; case 5: return "Competing in";
+    default: return "Playing";
+  }
+}
+
+function formatElapsed(ms: number) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const mm = String(m).padStart(2, "0");
+  const ss = String(s).padStart(2, "0");
+  return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
+}
+
+function DiscordCard() {
+  const [data, setData] = useState<LanyardData | null>(null);
+  const [error, setError] = useState(false);
+  const [tick, setTick] = useState(0);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      try {
+        const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_USER_ID}`);
+        const json = await res.json();
+        if (!cancelled) {
+          if (json?.success && json.data) { setData(json.data); setError(false); }
+          else setError(true);
+        }
+      } catch { if (!cancelled) setError(true); }
+    }
+    load();
+    const poll = setInterval(load, 15000);
+    const heartbeat = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => { cancelled = true; clearInterval(poll); clearInterval(heartbeat); };
+  }, []);
+
+  void tick;
+
+  if (error || !data) {
+    return (
+      <div className="pf-live-card pf-discord-card pf-live-card-empty">
+        <div className="pf-live-header">
+          <span className="pf-live-eyebrow">Discord Presence</span>
+          <span className="pf-live-dot" style={{ background: STATUS_COLORS.offline }} />
+        </div>
+        <p className="pf-live-empty">PRESENCE OFFLINE — LANYARD UNREACHABLE</p>
+      </div>
+    );
+  }
+
+  const status = data.discord_status || "offline";
+  const user = data.discord_user;
+  const avatar = user.avatar
+    ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.${user.avatar.startsWith("a_") ? "gif" : "png"}?size=256`
+    : `https://cdn.discordapp.com/embed/avatars/${(parseInt(user.discriminator || "0") || 0) % 5}.png`;
+
+  const activities = (data.activities || []).filter((a) => a.type !== 4);
+  const customStatus = (data.activities || []).find((a) => a.type === 4);
+
+  return (
+    <div className="pf-live-card pf-discord-card" data-cursor-link>
+      <div className="pf-live-header">
+        <span className="pf-live-eyebrow">Discord Presence</span>
+        <span className="pf-live-status">
+          <span className="pf-live-dot" style={{ background: STATUS_COLORS[status] }} />
+          <span>{STATUS_LABELS[status]}</span>
+        </span>
+      </div>
+      <div className="pf-discord-identity">
+        <div className="pf-discord-avatar-wrap">
+          <img src={avatar} alt={user.username} className="pf-discord-avatar" draggable={false} />
+          <span className="pf-discord-status-pill" style={{ background: STATUS_COLORS[status] }} />
+        </div>
+        <div className="pf-discord-meta">
+          <span className="pf-discord-name">{user.global_name || user.username}</span>
+          <span className="pf-discord-handle">@{user.username}</span>
+          {customStatus?.state && <span className="pf-discord-bio">{customStatus.state}</span>}
+        </div>
+      </div>
+      <div className="pf-discord-divider" />
+      <div className="pf-discord-activities">
+        {activities.length === 0 ? (
+          <p className="pf-live-empty">NO ACTIVE SESSIONS</p>
+        ) : activities.slice(0, 2).map((a, idx) => {
+          const isSpotify = a.type === 2 && a.name === "Spotify";
+          const large = a.assets?.large_image
+            ? (isSpotify && a.assets.large_image.startsWith("spotify:")
+                ? `https://i.scdn.co/image/${a.assets.large_image.split(":")[1]}`
+                : resolveDiscordAsset(a.assets.large_image, a.application_id))
+            : null;
+          const small = a.assets?.small_image ? resolveDiscordAsset(a.assets.small_image, a.application_id) : null;
+          const elapsed = a.timestamps?.start ? Date.now() - a.timestamps.start : null;
+          const total = a.timestamps?.start && a.timestamps?.end ? a.timestamps.end - a.timestamps.start : null;
+          const pct = elapsed != null && total ? Math.min(100, (elapsed / total) * 100) : null;
+          return (
+            <div key={a.id || idx} className="pf-activity-row">
+              {large && (
+                <div className="pf-activity-art">
+                  <img src={large} alt={a.name} draggable={false} />
+                  {small && <img src={small} alt="" className="pf-activity-art-small" draggable={false} />}
+                </div>
+              )}
+              <div className="pf-activity-body">
+                <span className="pf-activity-label">{a.type === 2 ? `Listening to ${a.name}` : activityLabel(a.type)}</span>
+                <span className="pf-activity-title">{a.type === 2 ? (a.details || a.name) : a.name}</span>
+                {a.type === 2 && a.state && <span className="pf-activity-sub">by {a.state}</span>}
+                {a.type !== 2 && a.details && <span className="pf-activity-sub">{a.details}</span>}
+                {a.type !== 2 && a.state && <span className="pf-activity-sub">{a.state}</span>}
+                {pct != null ? (
+                  <div className="pf-activity-progress">
+                    <div className="pf-activity-progress-fill" style={{ width: `${pct}%` }} />
+                  </div>
+                ) : elapsed != null ? (
+                  <span className="pf-activity-elapsed">{formatElapsed(elapsed)} elapsed</span>
+                ) : null}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+type LeetCodeData = {
+  totalSolved: number; easySolved: number; mediumSolved: number; hardSolved: number;
+  totalQuestions: number; totalEasy: number; totalMedium: number; totalHard: number;
+  ranking: number;
+};
+
+function LeetCodeCard() {
+  const [data, setData] = useState<LeetCodeData | null>(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`https://leetcode-api-faisalshohag.vercel.app/${LEETCODE_USERNAME}`)
+      .then((r) => r.json())
+      .then((j) => { if (!cancelled) { if (j && typeof j.totalSolved === "number") setData(j); else setError(true); } })
+      .catch(() => { if (!cancelled) setError(true); });
+    return () => { cancelled = true; };
+  }, []);
+
+  if (error) {
+    return (
+      <div className="pf-live-card pf-leetcode-card pf-live-card-empty">
+        <div className="pf-live-header">
+          <span className="pf-live-eyebrow">LeetCode</span>
+          <span className="pf-live-dot" style={{ background: STATUS_COLORS.offline }} />
+        </div>
+        <p className="pf-live-empty">STATS UNREACHABLE</p>
+      </div>
+    );
+  }
+
+  const loading = !data;
+  const totalPct = data ? Math.min(100, (data.totalSolved / Math.max(data.totalQuestions, 1)) * 100) : 0;
+  const buckets = [
+    { key: "Easy", solved: data?.easySolved ?? 0, total: data?.totalEasy ?? 0, color: "var(--cyan)" },
+    { key: "Medium", solved: data?.mediumSolved ?? 0, total: data?.totalMedium ?? 0, color: "var(--gold)" },
+    { key: "Hard", solved: data?.hardSolved ?? 0, total: data?.totalHard ?? 0, color: "var(--red)" },
+  ];
+
+  return (
+    <a
+      href={`https://leetcode.com/u/${LEETCODE_USERNAME}`}
+      target="_blank"
+      rel="noreferrer"
+      className="pf-live-card pf-leetcode-card"
+      data-cursor-link
+    >
+      <div className="pf-live-header">
+        <span className="pf-live-eyebrow">LeetCode</span>
+        <span className="pf-live-status">
+          <span className="pf-live-dot" style={{ background: "var(--gold)" }} />
+          <span>@{LEETCODE_USERNAME}</span>
+        </span>
+      </div>
+      <div className="pf-leetcode-headline">
+        <span className="pf-leetcode-total">{loading ? "—" : data!.totalSolved}</span>
+        <span className="pf-leetcode-total-label">Problems Solved</span>
+        <span className="pf-leetcode-rank">
+          Global Rank <strong>#{loading ? "—" : data!.ranking.toLocaleString()}</strong>
+        </span>
+      </div>
+      <div className="pf-leetcode-progress-wrap">
+        <div className="pf-leetcode-progress-track">
+          <div className="pf-leetcode-progress-fill" style={{ width: `${totalPct}%` }} />
+        </div>
+        <span className="pf-leetcode-progress-meta">
+          {loading ? "—" : `${data!.totalSolved} / ${data!.totalQuestions}`}
+        </span>
+      </div>
+      <div className="pf-leetcode-buckets">
+        {buckets.map((b) => {
+          const pct = b.total ? Math.min(100, (b.solved / b.total) * 100) : 0;
+          return (
+            <div key={b.key} className="pf-leetcode-bucket">
+              <div className="pf-leetcode-bucket-head">
+                <span className="pf-leetcode-bucket-label">{b.key}</span>
+                <span className="pf-leetcode-bucket-count">{loading ? "—" : `${b.solved}/${b.total}`}</span>
+              </div>
+              <div className="pf-leetcode-bucket-track">
+                <div className="pf-leetcode-bucket-fill" style={{ width: `${pct}%`, background: b.color }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </a>
+  );
+}
+
+export function Portfolio() {
+  usePageMeta({
+    title: "Rishab — Full-Stack Developer, Backend Specialist & Reverse Engineer",
+    description: "Rishab — full-stack developer and backend specialist from Delhi, India. HLS proxies, dev tooling, reverse-engineered systems, open-source contributions to Node.js, PreMiD, and FMHY.",
+    path: "/",
+  });
+  const [ready, setReady] = useState(false);
+  const [activeChapter, setActiveChapter] = useState("hero");
+  const heroWordRef = useRef<HTMLHeadingElement>(null);
+  const heroSubRef = useRef<HTMLParagraphElement>(null);
+  const onPreloaderDone = useCallback(() => setReady(true), []);
+
+  useEffect(() => {
+    if (!ready) return;
+    const word = heroWordRef.current;
+    const sub = heroSubRef.current;
+    if (word) {
+      requestAnimationFrame(() => {
+        word.style.transition = "opacity 1s cubic-bezier(0.16,1,0.3,1), transform 1s cubic-bezier(0.16,1,0.3,1)";
+        word.style.opacity = "1";
+        word.style.transform = "none";
+      });
+    }
+    if (sub) {
+      setTimeout(() => {
+        sub.style.transition = "opacity 0.9s cubic-bezier(0.16,1,0.3,1) 0.18s, transform 0.9s cubic-bezier(0.16,1,0.3,1) 0.18s";
+        sub.style.opacity = "1";
+        sub.style.transform = "none";
+      }, 60);
+    }
+  }, [ready]);
+
+  useEffect(() => {
+    if (!ready) return;
+    const sections = document.querySelectorAll("[data-chapter]");
+    const obs = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) setActiveChapter((e.target as HTMLElement).dataset.chapter || "");
+        });
+      },
+      { threshold: 0.25 }
+    );
+    sections.forEach((s) => obs.observe(s));
+    return () => obs.disconnect();
+  }, [ready]);
+
+  useEffect(() => {
+    if (!ready) return;
+    const els = Array.from(document.querySelectorAll("[data-reveal]"));
+    els.forEach((el) => {
+      const parent = el.parentElement;
+      if (!parent) return;
+      const siblings = Array.from(parent.querySelectorAll(":scope > [data-reveal]"));
+      const idx = siblings.indexOf(el as Element);
+      const existing = parseFloat((el as HTMLElement).style.transitionDelay || "0") * 1000;
+      if (idx > 0 && existing === 0) {
+        (el as HTMLElement).style.transitionDelay = `${idx * 0.12}s`;
+      }
+    });
+    const obs = new IntersectionObserver(
+      (entries) => { entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add("is-visible"); }); },
+      { threshold: 0.1 }
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, [ready]);
+
+  const chapters = [
+    { id: "hero", label: "Hero" },
+    { id: "about", label: "About" },
+    { id: "numbers", label: "Numbers" },
+    { id: "live", label: "Live" },
+    { id: "projects", label: "Projects" },
+    { id: "oss", label: "OSS" },
+    { id: "skills", label: "Skills" },
+    { id: "contact", label: "Contact" },
+  ];
+
+  return (
+    <div className="pf-root">
+      <Preloader onDone={onPreloaderDone} />
+      <Cursor />
+
+      <div className={`pf-shell${ready ? " is-ready" : ""}`}>
+        <div className="pf-noise-overlay" />
+        <div className="pf-command-grid" />
+
+        <nav className="pf-chapter-nav" aria-label="Chapter navigation">
+          {chapters.map((c, i) => (
+            <a
+              key={c.id}
+              href={`#${c.id}`}
+              className={activeChapter === c.id ? "is-active" : ""}
+            >
+              <span>{String(i).padStart(2, "0")}</span>
+              <span>{c.label}</span>
+            </a>
+          ))}
+        </nav>
+
+        <section id="hero" data-chapter="hero" className="pf-hero">
+          <div className="pf-hero-kicker" data-reveal="true">
+            <span>Rishab</span>
+            <span>Delhi, India</span>
+            <span>rishabnotfound</span>
+          </div>
+          <div className="pf-hero-layout">
+            <div className="pf-hero-copy">
+              <h1
+                ref={heroWordRef}
+                className="pf-hero-word"
+                style={{ opacity: 0, transform: "translateY(80px) rotateX(16deg)" }}
+              >
+                RISHAB
+              </h1>
+              <p
+                ref={heroSubRef}
+                className="pf-hero-subtitle"
+                style={{ opacity: 0, transform: "translateY(30px)" }}
+              >
+                Full-Stack Dev <span aria-hidden="true">.</span> Backend Specialist <span aria-hidden="true">.</span> Reverse Engineer <span aria-hidden="true">.</span> Open Source
+              </p>
+            </div>
+            <div className="pf-hero-visual" data-reveal="true">
+              <div className="pf-portrait-frame" aria-label="Abstract cyber visual">
+                <div className="pf-portrait-bg" />
+                <div className="pf-portrait-figure">
+                  <div className="pf-helmet">
+                    <span className="pf-visor" />
+                    <span className="pf-crest" />
+                  </div>
+                  <div className="pf-torso" />
+                </div>
+                <div className="pf-portrait-orbit pf-orbit-one" />
+                <div className="pf-portrait-orbit pf-orbit-two" />
+                <div className="pf-portrait-readout">
+                  <span>CORE ONLINE</span>
+                  <span>82 FOLLOWERS</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="pf-marquee" aria-hidden="true">
+            <div className="pf-marquee-track">
+              {MARQUEE_ITEMS.map((s, i) => <span key={i}>{s}</span>)}
+            </div>
+          </div>
+        </section>
+
+        <section id="about" data-chapter="about" className="pf-chapter pf-about-section">
+          <div className="pf-section-shell">
+            <p className="pf-chapter-label" data-reveal="true">01 / About</p>
+            <div className="pf-about-grid">
+              <h2 data-reveal="true">BETTER AT BREAKING HOW THINGS WORK.</h2>
+              <div className="pf-about-copy" data-reveal="true">
+                <p>I'm Rishab — a full-stack developer, backend specialist, and reverse engineer based in Delhi, India. Passionate about breaking down complex systems, web scraping, automation, and cryptography.</p>
+                <p>My work spans HLS proxy infrastructure, server management dashboards, MongoDB tooling, CLI developer tools, and Discord automation. I contribute to major open-source projects including Node.js, PreMiD, and FMHY.</p>
+              </div>
+            </div>
+            <Terminal />
+          </div>
+        </section>
+
+        <section id="numbers" data-chapter="numbers" className="pf-chapter pf-numbers-section">
+          <div className="pf-section-shell">
+            <p className="pf-chapter-label" data-reveal="true">02 / Numbers</p>
+            <div className="pf-metrics-grid">
+              <MetricCard value="27"  label="Public GitHub Repos"       delay={0} />
+              <MetricCard value="82"  label="GitHub Followers"          delay={100} />
+              <MetricCard value="60+" label="Total Stars Earned"        delay={200} />
+              <MetricCard value="3"   label="OSS PRs Merged to Major Projects" delay={300} />
+            </div>
+          </div>
+        </section>
+
+        <section id="live" data-chapter="live" className="pf-chapter pf-live-section">
+          <div className="pf-section-shell">
+            <p className="pf-chapter-label" data-reveal="true">03 / Live Signal</p>
+            <h2 className="pf-live-heading" data-reveal="true">REALTIME — PRESENCE &amp; PRACTICE.</h2>
+            <div className="pf-live-grid">
+              <div data-reveal="true"><DiscordCard /></div>
+              <div data-reveal="true"><LeetCodeCard /></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="projects" data-chapter="projects" className="pf-chapter">
+          <div className="pf-section-shell">
+            <div className="pf-section-heading">
+              <p className="pf-chapter-label" data-reveal="true">04 / Projects</p>
+              <h2 data-reveal="true">Systems that feel sharp before they speak.</h2>
+            </div>
+            <ProjectShowcase />
+            <div className="pf-projects-cta" data-reveal="true">
+              <Link href="/projects" className="pf-projects-cta-btn" data-cursor-link>
+                <span>See All Projects</span>
+                <ArrowRight size={16} />
+              </Link>
+              <span className="pf-projects-cta-meta">Full GitHub archive · live README previews</span>
+            </div>
+          </div>
+        </section>
+
+        <section id="oss" data-chapter="oss" className="pf-chapter pf-about-section">
+          <div className="pf-section-shell">
+            <p className="pf-chapter-label" data-reveal="true">05 / Open Source</p>
+            <h2 data-reveal="true">CONTRIBUTING TO THE COMMONS.</h2>
+            <div className="pf-oss-grid">
+              {OSS_PRS.map((pr, i) => (
+                <a
+                  key={i}
+                  href={pr.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="pf-oss-card"
+                  data-reveal="true"
+                  data-cursor-link
+                >
+                  <div className="pf-oss-header">
+                    <span className="pf-oss-project">{pr.project}</span>
+                    <span className="pf-oss-badge">MERGED</span>
+                  </div>
+                  <p className="pf-oss-desc">{pr.desc}</p>
+                  <div className="pf-oss-footer">
+                    <span className="pf-oss-pr">PR {pr.pr}</span>
+                    <ExternalLink size={14} />
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="skills" data-chapter="skills" className="pf-chapter pf-skills-section">
+          <div className="pf-section-shell">
+            <p className="pf-chapter-label" data-reveal="true">06 / Skills</p>
+            <div className="pf-skill-layout">
+              <h2 data-reveal="true">Tools sharpened for backend, scraping, and reverse engineering.</h2>
+              <LanguageStats />
+            </div>
+            <SkillCarousel />
+          </div>
+        </section>
+
+        <section id="contact" data-chapter="contact" className="pf-contact-section">
+          <div className="pf-contact-panel" data-reveal="true">
+            <p className="pf-chapter-label">07 / Contact</p>
+            <h2>LET'S BUILD SOMETHING TOGETHER</h2>
+            <div className="pf-contact-actions">
+              <a href="https://github.com/rishabnotfound" target="_blank" rel="noreferrer" data-cursor-link>
+                <Github size={18} aria-hidden="true" />
+                <span>GitHub</span>
+              </a>
+              <a href="https://linkedin.com/in/rishabnotfound" target="_blank" rel="noreferrer" data-cursor-link>
+                <Linkedin size={18} aria-hidden="true" />
+                <span>LinkedIn</span>
+              </a>
+              <a href="https://instagram.com/rishabnotfound" target="_blank" rel="noreferrer" data-cursor-link>
+                <Instagram size={18} aria-hidden="true" />
+                <span>Instagram</span>
+              </a>
+              <a href="https://discord.com/users/rishabnotfound" target="_blank" rel="noreferrer" data-cursor-link>
+                <MessageCircle size={18} aria-hidden="true" />
+                <span>Discord</span>
+              </a>
+            </div>
+            <p className="pf-contact-username">@rishabnotfound everywhere</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}
+
+export default Portfolio;
