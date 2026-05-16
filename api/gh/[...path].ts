@@ -1,30 +1,29 @@
-export const config = { runtime: "edge" };
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-export default async function handler(req: Request): Promise<Response> {
-  const url = new URL(req.url);
-  const sub = url.pathname.replace(/^\/api\/gh\//, "");
-  const upstream = `https://api.github.com/${sub}${url.search}`;
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const rawPath = Array.isArray(req.query.path)
+    ? req.query.path.join("/")
+    : String(req.query.path || "");
+
+  const search = req.url && req.url.includes("?") ? "?" + req.url.split("?")[1] : "";
+  const upstream = `https://api.github.com/${rawPath}${search}`;
 
   const headers: Record<string, string> = {
-    "Accept": req.headers.get("accept") || "application/vnd.github+json",
+    Accept: (req.headers["accept"] as string) || "application/vnd.github+json",
     "User-Agent": "rishab-portfolio-proxy",
     "X-GitHub-Api-Version": "2022-11-28",
   };
-  const token = process.env.GITHUB_TOKEN;
-  if (token) headers["Authorization"] = `Bearer ${token}`;
+  if (process.env.GITHUB_TOKEN) headers["Authorization"] = `Bearer ${process.env.GITHUB_TOKEN}`;
 
   try {
-    const res = await fetch(upstream, { headers });
-    const body = await res.arrayBuffer();
-    const outHeaders = new Headers();
-    const ct = res.headers.get("content-type");
-    if (ct) outHeaders.set("content-type", ct);
-    outHeaders.set("cache-control", "public, s-maxage=300, stale-while-revalidate=600");
-    return new Response(body, { status: res.status, headers: outHeaders });
+    const upstreamRes = await fetch(upstream, { headers });
+    const ct = upstreamRes.headers.get("content-type") || "application/json";
+    const body = await upstreamRes.arrayBuffer();
+    res.status(upstreamRes.status);
+    res.setHeader("content-type", ct);
+    res.setHeader("cache-control", "public, s-maxage=300, stale-while-revalidate=600");
+    res.send(Buffer.from(body));
   } catch (err) {
-    return new Response(JSON.stringify({ error: "proxy_failed", detail: String(err) }), {
-      status: 502,
-      headers: { "content-type": "application/json" },
-    });
+    res.status(502).json({ error: "proxy_failed", detail: String(err) });
   }
 }
