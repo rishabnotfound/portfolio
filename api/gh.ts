@@ -1,12 +1,17 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  const rawPath = Array.isArray(req.query.path)
-    ? req.query.path.join("/")
-    : String(req.query.path || "");
+  const url = new URL(req.url || "/", "http://x");
+  const path = url.searchParams.get("path") || "";
+  if (!path) {
+    res.status(400).json({ error: "missing_path" });
+    return;
+  }
 
-  const search = req.url && req.url.includes("?") ? "?" + req.url.split("?")[1] : "";
-  const upstream = `https://api.github.com/${rawPath}${search}`;
+  const passthrough = new URLSearchParams();
+  url.searchParams.forEach((v, k) => { if (k !== "path") passthrough.append(k, v); });
+  const qs = passthrough.toString();
+  const upstream = `https://api.github.com/${path}${qs ? "?" + qs : ""}`;
 
   const headers: Record<string, string> = {
     Accept: (req.headers["accept"] as string) || "application/vnd.github+json",
