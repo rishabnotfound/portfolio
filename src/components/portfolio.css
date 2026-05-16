@@ -33,7 +33,7 @@
   isolation: isolate;
   background:
     linear-gradient(#00000099, #00000099),
-    url("https://cyclops-portfolio.vercel.app/assets/reload-bg.gif") center / cover no-repeat;
+    url("/reload-bg.gif") center / cover no-repeat;
   position: fixed;
   inset: 0;
   overflow: hidden;
