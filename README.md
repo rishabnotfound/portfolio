@@ -2,7 +2,11 @@
 
 Cinematic personal portfolio. Vite + React + TypeScript SPA, deployed on Vercel at [rishab.cv](https://www.rishab.cv).
 
-## Stack
+## Preview
+
+<img width="2936" height="1678" alt="image" src="https://github.com/user-attachments/assets/720d9248-f045-43c2-a268-4f929ace8ca8" />
+
+### Stack
 
 - Vite 6, React 18, TypeScript
 - `wouter` for client-side routing (`/`, `/projects`)
