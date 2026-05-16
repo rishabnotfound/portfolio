@@ -40,6 +40,85 @@ function githubProxyPlugin(): Plugin {
   };
 }
 
+function leetcodeProxyPlugin(): Plugin {
+  const QUERY = `
+    query userStats($username: String!) {
+      matchedUser(username: $username) {
+        username
+        profile { ranking }
+        submitStatsGlobal { acSubmissionNum { difficulty count } }
+      }
+      allQuestionsCount { difficulty count }
+    }
+  `;
+
+  const bucket = (arr: { difficulty: string; count: number }[], k: string) =>
+    arr.find((b) => b.difficulty === k)?.count ?? 0;
+
+  const handler: Connect.NextHandleFunction = async (req, res, next) => {
+    if (!req.url || !req.url.startsWith("/api/leetcode")) return next();
+    const url = new URL(req.url, "http://x");
+    const username = (url.searchParams.get("username") || "").trim();
+    if (!username) {
+      res.statusCode = 400;
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify({ error: "missing_username" }));
+      return;
+    }
+    try {
+      const upstreamRes = await fetch("https://leetcode.com/graphql", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "User-Agent": "rishab-portfolio-proxy",
+          "Referer": `https://leetcode.com/u/${username}`,
+        },
+        body: JSON.stringify({ query: QUERY, variables: { username } }),
+      });
+      if (!upstreamRes.ok) {
+        res.statusCode = upstreamRes.status;
+        res.setHeader("Content-Type", "application/json");
+        res.end(JSON.stringify({ error: "upstream_error" }));
+        return;
+      }
+      const j: any = await upstreamRes.json();
+      if (j.errors?.length || !j.data?.matchedUser) {
+        res.statusCode = 404;
+        res.setHeader("Content-Type", "application/json");
+        res.end(JSON.stringify({ error: "user_not_found" }));
+        return;
+      }
+      const u = j.data.matchedUser;
+      const solved = u.submitStatsGlobal.acSubmissionNum;
+      const all = j.data.allQuestionsCount;
+      res.statusCode = 200;
+      res.setHeader("Content-Type", "application/json");
+      res.setHeader("Cache-Control", "public, max-age=300");
+      res.end(JSON.stringify({
+        username: u.username,
+        ranking: u.profile.ranking,
+        totalSolved: bucket(solved, "All"),
+        easySolved: bucket(solved, "Easy"),
+        mediumSolved: bucket(solved, "Medium"),
+        hardSolved: bucket(solved, "Hard"),
+        totalQuestions: bucket(all, "All"),
+        totalEasy: bucket(all, "Easy"),
+        totalMedium: bucket(all, "Medium"),
+        totalHard: bucket(all, "Hard"),
+      }));
+    } catch (err) {
+      res.statusCode = 502;
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify({ error: "proxy_failed", detail: String(err) }));
+    }
+  };
+  return {
+    name: "leetcode-proxy",
+    configureServer(server: ViteDevServer) { server.middlewares.use(handler); },
+    configurePreviewServer(server: PreviewServer) { server.middlewares.use(handler); },
+  };
+}
+
 export default defineConfig({
   base: basePath,
   plugins: [
@@ -47,6 +126,7 @@ export default defineConfig({
     tailwindcss(),
     runtimeErrorOverlay(),
     githubProxyPlugin(),
+    leetcodeProxyPlugin(),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
       ? [

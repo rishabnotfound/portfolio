@@ -682,7 +682,7 @@ function LeetCodeCard() {
 
   useEffect(() => {
     let cancelled = false;
-    fetch(`https://leetcode-api-faisalshohag.vercel.app/${LEETCODE_USERNAME}`)
+    fetch(`/api/leetcode?username=${encodeURIComponent(LEETCODE_USERNAME)}`)
       .then((r) => r.json())
       .then((j) => { if (!cancelled) { if (j && typeof j.totalSolved === "number") setData(j); else setError(true); } })
       .catch(() => { if (!cancelled) setError(true); });
