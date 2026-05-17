@@ -902,85 +902,20 @@ export function Portfolio() {
   useEffect(() => {
     if (!ready) return;
 
-    const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
-
+    let rafScheduled = false;
     function updateProgress() {
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const pct = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0;
       if (navProgressRef.current) navProgressRef.current.style.width = pct + "%";
     }
-
-    if (isTouch) {
-      let rafScheduled = false;
-      function onScroll() {
-        if (rafScheduled) return;
-        rafScheduled = true;
-        requestAnimationFrame(() => {
-          updateProgress();
-          rafScheduled = false;
-        });
-      }
-      function onAnchorClick(e: MouseEvent) {
-        const a = (e.target as Element).closest("a[href^='#']") as HTMLAnchorElement | null;
-        if (!a) return;
-        const id = a.getAttribute("href")!.slice(1);
-        if (!id) return;
-        const el = document.getElementById(id);
-        if (!el) return;
-        e.preventDefault();
-        const top = el.getBoundingClientRect().top + window.scrollY - 60;
-        window.scrollTo({ top, behavior: "smooth" });
-      }
-      updateProgress();
-      window.addEventListener("scroll", onScroll, { passive: true });
-      document.addEventListener("click", onAnchorClick);
-      return () => {
-        window.removeEventListener("scroll", onScroll);
-        document.removeEventListener("click", onAnchorClick);
-      };
+    function onScroll() {
+      if (rafScheduled) return;
+      rafScheduled = true;
+      requestAnimationFrame(() => {
+        updateProgress();
+        rafScheduled = false;
+      });
     }
-
-    let target = window.scrollY;
-    let current = window.scrollY;
-    let rafId = 0;
-
-    function clampTarget() {
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      if (target < 0) target = 0;
-      if (target > max) target = max;
-    }
-
-    function tick() {
-      current += (target - current) * 0.09;
-      if (Math.abs(target - current) < 0.5) current = target;
-      if (Math.round(current) !== Math.round(window.scrollY)) {
-        window.scrollTo(0, current);
-      }
-      updateProgress();
-      rafId = requestAnimationFrame(tick);
-    }
-
-    function onWheel(e: WheelEvent) {
-      if (e.ctrlKey) return;
-      e.preventDefault();
-      target += e.deltaY;
-      clampTarget();
-    }
-
-    function onKey(e: KeyboardEvent) {
-      const keys = ["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "];
-      if (!keys.includes(e.key)) return;
-      const step = window.innerHeight * 0.85;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      if (e.key === "ArrowDown") target += 120;
-      else if (e.key === "ArrowUp") target -= 120;
-      else if (e.key === "PageDown" || e.key === " ") target += step;
-      else if (e.key === "PageUp") target -= step;
-      else if (e.key === "Home") target = 0;
-      else if (e.key === "End") target = max;
-      clampTarget();
-    }
-
     function onAnchorClick(e: MouseEvent) {
       const a = (e.target as Element).closest("a[href^='#']") as HTMLAnchorElement | null;
       if (!a) return;
@@ -989,20 +924,16 @@ export function Portfolio() {
       const el = document.getElementById(id);
       if (!el) return;
       e.preventDefault();
-      target = el.getBoundingClientRect().top + window.scrollY - 60;
-      clampTarget();
+      const top = el.getBoundingClientRect().top + window.scrollY - 60;
+      window.scrollTo({ top, behavior: "smooth" });
     }
 
-    window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("keydown", onKey);
+    updateProgress();
+    window.addEventListener("scroll", onScroll, { passive: true });
     document.addEventListener("click", onAnchorClick);
-    rafId = requestAnimationFrame(tick);
-
     return () => {
-      window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("scroll", onScroll);
       document.removeEventListener("click", onAnchorClick);
-      cancelAnimationFrame(rafId);
     };
   }, [ready]);
 
