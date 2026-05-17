@@ -15,7 +15,7 @@ function githubProxyPlugin(): Plugin {
     const upstream = "https://api.github.com/" + req.url.slice("/api/gh/".length);
     const headers: Record<string, string> = {
       "Accept": req.headers["accept"]?.toString() || "application/vnd.github+json",
-      "User-Agent": "rishab-portfolio-proxy",
+      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
       "X-GitHub-Api-Version": "2022-11-28",
     };
     if (githubToken) headers["Authorization"] = `Bearer ${githubToken}`;
@@ -70,7 +70,7 @@ function leetcodeProxyPlugin(): Plugin {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "User-Agent": "rishab-portfolio-proxy",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
           "Referer": `https://leetcode.com/u/${username}`,
         },
         body: JSON.stringify({ query: QUERY, variables: { username } }),

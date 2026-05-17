@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "wouter";
-import { Code, MessageCircle, Github, Instagram, Linkedin, ExternalLink, ArrowRight, Star } from "lucide-react";
+import { Code, MessageCircle, Github, Instagram, Linkedin, ExternalLink, ArrowRight, Star, GraduationCap, Briefcase } from "lucide-react";
 import { usePageMeta } from "../lib/seo";
 import { GH_USER, LANG_COLORS, fetchReadmePreview, timeAgo, type Repo } from "../lib/github";
 import { SKILLS, CATEGORIES, type SkillCategory } from "../lib/skills";
@@ -26,6 +26,65 @@ const TERMINAL_LINES = [
   "web.scraping.engine: ready",
   "crypto.toolkit.sync: operational",
   "open.source.prs.merged: 3 ✓",
+];
+
+type JourneyEntry = {
+  kind: "education" | "work";
+  logo: string;
+  title: string;
+  org: string;
+  url: string;
+  period: string;
+  status: "current" | "completed";
+  detail: string;
+  tags: string[];
+};
+
+const JOURNEY: JourneyEntry[] = [
+  {
+    kind: "work",
+    logo: "/educations/nept.png",
+    title: "Frontend & Backend Engineer",
+    org: "Nept.Cloud",
+    url: "https://nept.cloud",
+    period: "May 2025 — Present",
+    status: "current",
+    detail: "Building Nept.Cloud — a self-funded cloud platform. Shipping the product end-to-end: UI, APIs, infra, and CI/CD pipelines.",
+    tags: ["Self-Employed", "DevOps", "CI/CD", "Full-Stack"],
+  },
+  {
+    kind: "education",
+    logo: "/educations/college.png",
+    title: "B.Tech, Computer Science & Engineering",
+    org: "IILM University, Gurugram",
+    url: "https://iilm.edu/gurugram/",
+    period: "2026 — Present",
+    status: "current",
+    detail: "Pursuing Computer Science Engineering with focus on systems, networks, and applied software engineering.",
+    tags: ["CSE", "Undergraduate"],
+  },
+  {
+    kind: "education",
+    logo: "/educations/school.png",
+    title: "Class XII (CBSE)",
+    org: "Apeejay School, Panchsheel Park",
+    url: "https://www.apeejay.edu/panchsheel/",
+    period: "2024 — 2025",
+    status: "completed",
+    detail: "Senior secondary, CBSE board. Final score: 8.1 CGPA.",
+    tags: ["8.1 CGPA", "CBSE"],
+  },
+  {
+    kind: "education",
+    logo: "/educations/school.png",
+    title: "Class X (CBSE)",
+    org: "Apeejay School, Panchsheel Park",
+    url: "https://www.apeejay.edu/panchsheel/",
+    period: "2022 — 2023",
+    status: "completed",
+    detail: "Secondary school, CBSE board. Final score: 7.7 CGPA.",
+    tags: ["7.7 CGPA", "CBSE"],
+  },
 ];
 
 const OSS_PRS = [
@@ -347,6 +406,53 @@ function LanguageStats() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function JourneyTimeline() {
+  return (
+    <div className="pf-journey">
+      <div className="pf-journey-spine" aria-hidden="true" />
+      {JOURNEY.map((j, i) => (
+        <article
+          key={`${j.org}-${j.period}`}
+          className={`pf-journey-entry pf-journey-${j.kind}${j.status === "current" ? " is-current" : ""}`}
+          data-reveal="true"
+          style={{ transitionDelay: `${i * 0.08}s` }}
+        >
+          <div className="pf-journey-node" aria-hidden="true">
+            {j.kind === "education" ? <GraduationCap size={14} /> : <Briefcase size={14} />}
+          </div>
+          <div className="pf-journey-period">
+            <span>{j.period}</span>
+            {j.status === "current" && <span className="pf-journey-current-dot" />}
+          </div>
+          <a
+            href={j.url}
+            target="_blank"
+            rel="noreferrer"
+            className="pf-journey-card"
+            data-cursor-link
+          >
+            <div className="pf-journey-card-head">
+              <div className="pf-journey-logo">
+                <img src={j.logo} alt={j.org} draggable={false} />
+              </div>
+              <div className="pf-journey-meta">
+                <span className="pf-journey-kind">{j.kind === "education" ? "Education" : "Work"}</span>
+                <h3 className="pf-journey-title">{j.title}</h3>
+                <span className="pf-journey-org">{j.org}</span>
+              </div>
+              <ExternalLink size={14} className="pf-journey-link-icon" />
+            </div>
+            <p className="pf-journey-detail">{j.detail}</p>
+            <div className="pf-journey-tags">
+              {j.tags.map((t) => <span key={t}>{t}</span>)}
+            </div>
+          </a>
+        </article>
+      ))}
     </div>
   );
 }
@@ -767,6 +873,8 @@ export function Portfolio() {
   });
   const [ready, setReady] = useState(false);
   const [activeChapter, setActiveChapter] = useState("hero");
+  const navLinksRef = useRef<HTMLDivElement>(null);
+  const navProgressRef = useRef<HTMLSpanElement>(null);
   const heroWordRef = useRef<HTMLHeadingElement>(null);
   const heroSubRef = useRef<HTMLParagraphElement>(null);
   const onPreloaderDone = useCallback(() => setReady(true), []);
@@ -793,6 +901,92 @@ export function Portfolio() {
 
   useEffect(() => {
     if (!ready) return;
+
+    let target = window.scrollY;
+    let current = window.scrollY;
+    let rafId = 0;
+    let userScrolling = false;
+    let userScrollTimer = 0;
+
+    function clampTarget() {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (target < 0) target = 0;
+      if (target > max) target = max;
+    }
+
+    function tick() {
+      current += (target - current) * 0.09;
+      if (Math.abs(target - current) < 0.5) current = target;
+      if (Math.round(current) !== Math.round(window.scrollY) && !userScrolling) {
+        window.scrollTo(0, current);
+      }
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0;
+      if (navProgressRef.current) navProgressRef.current.style.width = pct + "%";
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function onWheel(e: WheelEvent) {
+      if (e.ctrlKey) return;
+      e.preventDefault();
+      target += e.deltaY;
+      clampTarget();
+    }
+
+    function onTouch() {
+      userScrolling = true;
+      target = window.scrollY;
+      current = window.scrollY;
+      window.clearTimeout(userScrollTimer);
+      userScrollTimer = window.setTimeout(() => { userScrolling = false; }, 120);
+    }
+
+    function onKey(e: KeyboardEvent) {
+      const keys = ["ArrowDown", "ArrowUp", "PageDown", "PageUp", "Home", "End", " "];
+      if (!keys.includes(e.key)) return;
+      const step = window.innerHeight * 0.85;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      if (e.key === "ArrowDown") target += 120;
+      else if (e.key === "ArrowUp") target -= 120;
+      else if (e.key === "PageDown" || e.key === " ") target += step;
+      else if (e.key === "PageUp") target -= step;
+      else if (e.key === "Home") target = 0;
+      else if (e.key === "End") target = max;
+      clampTarget();
+    }
+
+    function onAnchorClick(e: MouseEvent) {
+      const a = (e.target as Element).closest("a[href^='#']") as HTMLAnchorElement | null;
+      if (!a) return;
+      const id = a.getAttribute("href")!.slice(1);
+      if (!id) return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      e.preventDefault();
+      target = el.getBoundingClientRect().top + window.scrollY - 60;
+      clampTarget();
+    }
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    window.addEventListener("touchstart", onTouch, { passive: true });
+    window.addEventListener("touchmove", onTouch, { passive: true });
+    window.addEventListener("keydown", onKey);
+    document.addEventListener("click", onAnchorClick);
+    rafId = requestAnimationFrame(tick);
+
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouch);
+      window.removeEventListener("touchmove", onTouch);
+      window.removeEventListener("keydown", onKey);
+      document.removeEventListener("click", onAnchorClick);
+      cancelAnimationFrame(rafId);
+      window.clearTimeout(userScrollTimer);
+    };
+  }, [ready]);
+
+  useEffect(() => {
+    if (!ready) return;
     const sections = document.querySelectorAll("[data-chapter]");
     const obs = new IntersectionObserver(
       (entries) => {
@@ -805,6 +999,17 @@ export function Portfolio() {
     sections.forEach((s) => obs.observe(s));
     return () => obs.disconnect();
   }, [ready]);
+
+  useEffect(() => {
+    const container = navLinksRef.current;
+    if (!container) return;
+    const active = container.querySelector<HTMLAnchorElement>("a.is-active");
+    if (!active) return;
+    const cRect = container.getBoundingClientRect();
+    const aRect = active.getBoundingClientRect();
+    const offset = aRect.left - cRect.left - (cRect.width / 2 - aRect.width / 2);
+    container.scrollTo({ left: container.scrollLeft + offset, behavior: "smooth" });
+  }, [activeChapter]);
 
   useEffect(() => {
     if (!ready) return;
@@ -834,6 +1039,7 @@ export function Portfolio() {
     { id: "live", label: "Live" },
     { id: "projects", label: "Projects" },
     { id: "oss", label: "OSS" },
+    { id: "journey", label: "Journey" },
     { id: "skills", label: "Skills" },
     { id: "contact", label: "Contact" },
   ];
@@ -843,22 +1049,44 @@ export function Portfolio() {
       <Preloader onDone={onPreloaderDone} />
       <Cursor />
 
-      <div className={`pf-shell${ready ? " is-ready" : ""}`}>
-        <div className="pf-noise-overlay" />
-        <div className="pf-command-grid" />
-
-        <nav className="pf-chapter-nav" aria-label="Chapter navigation">
+      <nav className={`pf-chapter-nav${ready ? " is-ready" : ""}`} aria-label="Chapter navigation">
+        <a href="#hero" className="pf-chapter-nav-brand" data-cursor-link>
+          <img src="/nobg.png" alt="Rishab" />
+          <span>RISHAB</span>
+        </a>
+        <div className="pf-chapter-nav-links" ref={navLinksRef}>
           {chapters.map((c, i) => (
             <a
               key={c.id}
               href={`#${c.id}`}
               className={activeChapter === c.id ? "is-active" : ""}
+              data-cursor-link
             >
               <span>{String(i).padStart(2, "0")}</span>
               <span>{c.label}</span>
             </a>
           ))}
-        </nav>
+        </div>
+        <a
+          href="https://github.com/rishabnotfound"
+          target="_blank"
+          rel="noreferrer"
+          className="pf-chapter-nav-cta"
+          data-cursor-link
+        >
+          <Github size={12} aria-hidden="true" />
+          <span>GitHub</span>
+        </a>
+        <span
+          ref={navProgressRef}
+          className="pf-chapter-nav-progress"
+          aria-hidden="true"
+        />
+      </nav>
+
+      <div className={`pf-shell${ready ? " is-ready" : ""}`}>
+        <div className="pf-noise-overlay" />
+        <div className="pf-command-grid" />
 
         <section id="hero" data-chapter="hero" className="pf-hero">
           <div className="pf-hero-kicker" data-reveal="true">
@@ -958,7 +1186,6 @@ export function Portfolio() {
                 <span>See All Projects</span>
                 <ArrowRight size={16} />
               </Link>
-              <span className="pf-projects-cta-meta">Full GitHub archive · live README previews</span>
             </div>
           </div>
         </section>
@@ -993,9 +1220,19 @@ export function Portfolio() {
           </div>
         </section>
 
+        <section id="journey" data-chapter="journey" className="pf-chapter pf-journey-section">
+          <div className="pf-section-shell">
+            <div className="pf-section-heading">
+              <p className="pf-chapter-label" data-reveal="true">06 / Journey</p>
+              <h2 data-reveal="true">EDUCATION &amp; WORK — TRAJECTORY ON RECORD.</h2>
+            </div>
+            <JourneyTimeline />
+          </div>
+        </section>
+
         <section id="skills" data-chapter="skills" className="pf-chapter pf-skills-section">
           <div className="pf-section-shell">
-            <p className="pf-chapter-label" data-reveal="true">06 / Skills</p>
+            <p className="pf-chapter-label" data-reveal="true">07 / Skills</p>
             <div className="pf-skill-layout">
               <h2 data-reveal="true">Tools sharpened for backend, scraping, and reverse engineering.</h2>
               <LanguageStats />
@@ -1006,7 +1243,7 @@ export function Portfolio() {
 
         <section id="contact" data-chapter="contact" className="pf-contact-section">
           <div className="pf-contact-panel" data-reveal="true">
-            <p className="pf-chapter-label">07 / Contact</p>
+            <p className="pf-chapter-label">08 / Contact</p>
             <h2>LET'S BUILD SOMETHING TOGETHER</h2>
             <div className="pf-contact-actions">
               <a href="https://github.com/rishabnotfound" target="_blank" rel="noreferrer" data-cursor-link>
@@ -1021,7 +1258,7 @@ export function Portfolio() {
                 <Instagram size={18} aria-hidden="true" />
                 <span>Instagram</span>
               </a>
-              <a href="https://discord.com/users/rishabnotfound" target="_blank" rel="noreferrer" data-cursor-link>
+              <a href="https://discord.com/users/1141729666160402565" target="_blank" rel="noreferrer" data-cursor-link>
                 <MessageCircle size={18} aria-hidden="true" />
                 <span>Discord</span>
               </a>
