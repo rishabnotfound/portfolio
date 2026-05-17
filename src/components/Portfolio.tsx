@@ -66,13 +66,13 @@ const JOURNEY: JourneyEntry[] = [
   {
     kind: "education",
     logo: "/educations/school.png",
-    title: "Class XII (CBSE)",
+    title: "Class XII (CBSE) - PCM",
     org: "Apeejay School, Panchsheel Park",
     url: "https://www.apeejay.edu/panchsheel/",
     period: "2024 — 2025",
     status: "completed",
     detail: "Senior secondary, CBSE board. Final score: 8.1 CGPA.",
-    tags: ["8.1 CGPA", "CBSE"],
+    tags: ["7.7 CGPA", "CBSE"],
   },
   {
     kind: "education",
@@ -83,7 +83,7 @@ const JOURNEY: JourneyEntry[] = [
     period: "2022 — 2023",
     status: "completed",
     detail: "Secondary school, CBSE board. Final score: 7.7 CGPA.",
-    tags: ["7.7 CGPA", "CBSE"],
+    tags: ["8.1 CGPA", "CBSE"],
   },
 ];
 
