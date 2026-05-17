@@ -902,11 +902,47 @@ export function Portfolio() {
   useEffect(() => {
     if (!ready) return;
 
+    const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+
+    function updateProgress() {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0;
+      if (navProgressRef.current) navProgressRef.current.style.width = pct + "%";
+    }
+
+    if (isTouch) {
+      let rafScheduled = false;
+      function onScroll() {
+        if (rafScheduled) return;
+        rafScheduled = true;
+        requestAnimationFrame(() => {
+          updateProgress();
+          rafScheduled = false;
+        });
+      }
+      function onAnchorClick(e: MouseEvent) {
+        const a = (e.target as Element).closest("a[href^='#']") as HTMLAnchorElement | null;
+        if (!a) return;
+        const id = a.getAttribute("href")!.slice(1);
+        if (!id) return;
+        const el = document.getElementById(id);
+        if (!el) return;
+        e.preventDefault();
+        const top = el.getBoundingClientRect().top + window.scrollY - 60;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+      updateProgress();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      document.addEventListener("click", onAnchorClick);
+      return () => {
+        window.removeEventListener("scroll", onScroll);
+        document.removeEventListener("click", onAnchorClick);
+      };
+    }
+
     let target = window.scrollY;
     let current = window.scrollY;
     let rafId = 0;
-    let userScrolling = false;
-    let userScrollTimer = 0;
 
     function clampTarget() {
       const max = document.documentElement.scrollHeight - window.innerHeight;
@@ -917,12 +953,10 @@ export function Portfolio() {
     function tick() {
       current += (target - current) * 0.09;
       if (Math.abs(target - current) < 0.5) current = target;
-      if (Math.round(current) !== Math.round(window.scrollY) && !userScrolling) {
+      if (Math.round(current) !== Math.round(window.scrollY)) {
         window.scrollTo(0, current);
       }
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      const pct = max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0;
-      if (navProgressRef.current) navProgressRef.current.style.width = pct + "%";
+      updateProgress();
       rafId = requestAnimationFrame(tick);
     }
 
@@ -931,14 +965,6 @@ export function Portfolio() {
       e.preventDefault();
       target += e.deltaY;
       clampTarget();
-    }
-
-    function onTouch() {
-      userScrolling = true;
-      target = window.scrollY;
-      current = window.scrollY;
-      window.clearTimeout(userScrollTimer);
-      userScrollTimer = window.setTimeout(() => { userScrolling = false; }, 120);
     }
 
     function onKey(e: KeyboardEvent) {
@@ -968,20 +994,15 @@ export function Portfolio() {
     }
 
     window.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("touchstart", onTouch, { passive: true });
-    window.addEventListener("touchmove", onTouch, { passive: true });
     window.addEventListener("keydown", onKey);
     document.addEventListener("click", onAnchorClick);
     rafId = requestAnimationFrame(tick);
 
     return () => {
       window.removeEventListener("wheel", onWheel);
-      window.removeEventListener("touchstart", onTouch);
-      window.removeEventListener("touchmove", onTouch);
       window.removeEventListener("keydown", onKey);
       document.removeEventListener("click", onAnchorClick);
       cancelAnimationFrame(rafId);
-      window.clearTimeout(userScrollTimer);
     };
   }, [ready]);
 
