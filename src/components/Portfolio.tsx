@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "wouter";
-import { Code, MessageCircle, Github, Instagram, Linkedin, ExternalLink, ArrowRight, Star, GraduationCap, Briefcase } from "lucide-react";
+import { Code, MessageCircle, Github, Instagram, Linkedin, ExternalLink, ArrowRight, Star, GraduationCap, Briefcase, Youtube } from "lucide-react";
 import { usePageMeta } from "../lib/seo";
 import { GH_USER, LANG_COLORS, fetchReadmePreview, timeAgo, type Repo } from "../lib/github";
 import { SKILLS, CATEGORIES, type SkillCategory } from "../lib/skills";
@@ -1206,9 +1206,29 @@ export function Portfolio() {
                 <Linkedin size={18} aria-hidden="true" />
                 <span>LinkedIn</span>
               </a>
+              <a href="https://leetcode.com/u/rishabnotfound/" target="_blank" rel="noreferrer" data-cursor-link>
+                <svg role="img" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M13.483 0a1.374 1.374 0 0 0-.961.438L7.116 6.226l-3.854 4.126a5.266 5.266 0 0 0-1.209 2.104 5.35 5.35 0 0 0-.125.513 5.527 5.527 0 0 0 .062 2.362 5.83 5.83 0 0 0 .349 1.017 5.938 5.938 0 0 0 1.271 1.818l4.277 4.193.039.038c2.248 2.165 5.852 2.133 8.063-.074l2.396-2.392c.54-.54.54-1.414.003-1.955a1.378 1.378 0 0 0-1.951-.003l-2.396 2.392a3.021 3.021 0 0 1-4.205.038l-.02-.019-4.276-4.193c-.652-.64-.972-1.469-.948-2.263a2.68 2.68 0 0 1 .066-.523 2.545 2.545 0 0 1 .619-1.164L9.13 8.114c1.058-1.134 3.204-1.27 4.43-.278l3.501 2.831c.593.48 1.461.387 1.94-.207a1.384 1.384 0 0 0-.207-1.943l-3.5-2.831c-.8-.647-1.766-1.045-2.774-1.202l2.015-2.158A1.384 1.384 0 0 0 13.483 0zm-2.866 12.815a1.38 1.38 0 0 0-1.38 1.382 1.38 1.38 0 0 0 1.38 1.382H20.79a1.38 1.38 0 0 0 1.38-1.382 1.38 1.38 0 0 0-1.38-1.382z"/></svg>
+                <span>LeetCode</span>
+              </a>
+              <a href="https://tryhackme.com/p/rishabnotfound" target="_blank" rel="noreferrer" data-cursor-link>
+                <svg role="img" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M11.8307.0006C9.3399.0247 6.9802 1.349 5.6831 3.541c-.4775-.1719-.9845-.2611-1.4945-.2629-2.3105 0-4.1885 1.8765-4.1885 4.187a4.1928 4.1928 0 0 0 1.5709 3.2696L12 21l10.4297-10.331a4.1928 4.1928 0 0 0 1.5703-3.2683c0-2.3105-1.879-4.187-4.1895-4.187-.51.0018-1.016.091-1.4935.263C16.9226 1.3104 14.4435-.0245 11.8307.0006Zm-.4 4.5938c.2362-.0001.4727.0467.694.1406l3.4843 1.4814a1.7686 1.7686 0 0 1 1.0762 1.6133v.0156l-.0098 2.3438a.6075.6075 0 0 1-.0117.1132.6075.6075 0 0 1-.039.1075.6075.6075 0 0 1-.0567.0976.6075.6075 0 0 1-.0742.0879.6075.6075 0 0 1-.0879.0703.6075.6075 0 0 1-.0976.0547.6075.6075 0 0 1-.1075.039.6075.6075 0 0 1-.5469-.1015L13.832 9.7748a.6075.6075 0 0 1-.084-.078.6075.6075 0 0 1-.0644-.0917.6075.6075 0 0 1-.0469-.1016.6075.6075 0 0 1-.0273-.107.6075.6075 0 0 1-.0079-.1094.6075.6075 0 0 1 .0118-.1094.6075.6075 0 0 1 .0312-.1054.6075.6075 0 0 1 .0508-.0996.6075.6075 0 0 1 .0664-.09l1.5469-1.6661-3.207-1.3633-3.213 1.3633 1.5468 1.666a.6075.6075 0 0 1 .121.1898.6075.6075 0 0 1 .0429.2207.6075.6075 0 0 1-.0078.1094.6075.6075 0 0 1-.0273.1074.6075.6075 0 0 1-.047.1016.6075.6075 0 0 1-.0644.0918.6075.6075 0 0 1-.084.078L7.5392 11.123a.6075.6075 0 0 1-.0996.0567.6075.6075 0 0 1-.1074.039.6075.6075 0 0 1-.1133.0117.6075.6075 0 0 1-.1132-.0117.6075.6075 0 0 1-.1075-.039.6075.6075 0 0 1-.0976-.0547.6075.6075 0 0 1-.088-.0703.6075.6075 0 0 1-.0741-.088.6075.6075 0 0 1-.0567-.0976.6075.6075 0 0 1-.039-.1074.6075.6075 0 0 1-.0117-.1133L6.7253 7.974v-.0118a1.7686 1.7686 0 0 1 1.0762-1.6133l3.4863-1.4814c.2213-.0939.4559-.1407.682-.1406z"/></svg>
+                <span>TryHackMe</span>
+              </a>
+              <a href="https://codeforces.com/profile/rishabnotfound" target="_blank" rel="noreferrer" data-cursor-link>
+                <svg role="img" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M4.5 7.5A1.5 1.5 0 0 1 6 9v10.5A1.5 1.5 0 0 1 4.5 21h-3C.673 21 0 20.328 0 19.5V9c0-.828.673-1.5 1.5-1.5h3zm9 -3A1.5 1.5 0 0 1 15 6v13.5a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 19.5V6a1.5 1.5 0 0 1 1.5-1.5h3zm9 6A1.5 1.5 0 0 1 24 12v7.5a1.5 1.5 0 0 1-1.5 1.5h-3a1.5 1.5 0 0 1-1.5-1.5V12a1.5 1.5 0 0 1 1.5-1.5h3z"/></svg>
+                <span>Codeforces</span>
+              </a>
               <a href="https://instagram.com/rishabnotfound" target="_blank" rel="noreferrer" data-cursor-link>
                 <Instagram size={18} aria-hidden="true" />
                 <span>Instagram</span>
+              </a>
+              <a href="https://x.com/rishabnotfound" target="_blank" rel="noreferrer" data-cursor-link>
+                <svg role="img" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                <span>X</span>
+              </a>
+               <a href="https://youtube.com/@rishabnotfound" target="_blank" rel="noreferrer" data-cursor-link>
+                <Youtube size={18} aria-hidden="true" />
+                <span>Youtube</span>
               </a>
               <a href="https://discord.com/users/1141729666160402565" target="_blank" rel="noreferrer" data-cursor-link>
                 <MessageCircle size={18} aria-hidden="true" />
