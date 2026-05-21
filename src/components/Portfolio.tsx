@@ -71,7 +71,7 @@ const JOURNEY: JourneyEntry[] = [
     url: "https://www.apeejay.edu/panchsheel/",
     period: "2024 — 2025",
     status: "completed",
-    detail: "Senior secondary, CBSE board. Final score: 8.1 CGPA.",
+    detail: "Senior secondary, CBSE board. Final score: 7.7 CGPA.",
     tags: ["7.7 CGPA", "CBSE"],
   },
   {
@@ -82,7 +82,7 @@ const JOURNEY: JourneyEntry[] = [
     url: "https://www.apeejay.edu/panchsheel/",
     period: "2022 — 2023",
     status: "completed",
-    detail: "Secondary school, CBSE board. Final score: 7.7 CGPA.",
+    detail: "Secondary school, CBSE board. Final score: 8.1 CGPA.",
     tags: ["8.1 CGPA", "CBSE"],
   },
 ];
