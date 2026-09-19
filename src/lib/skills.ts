@@ -17,6 +17,7 @@ const si = (slug: string) => `https://cdn.simpleicons.org/${slug}`;
 export const SKILLS: Skill[] = [
   { category: "Languages", name: "JavaScript", icon: dev("javascript") },
   { category: "Languages", name: "TypeScript", icon: dev("typescript") },
+  { category: "Languages", name: "C", icon: dev("c") },
   { category: "Languages", name: "Python", icon: dev("python") },
   { category: "Languages", name: "Go", icon: dev("go") },
   { category: "Languages", name: "PHP", icon: dev("php") },

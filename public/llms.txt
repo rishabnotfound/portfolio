@@ -1,0 +1,74 @@
+# Rishab
+
+> Rishab (handle: @rishabnotfound) — Co-Founder & DevOps Engineer at Nept Cloud. Full-stack developer (frontend + backend + DevOps), backend specialist, and reverse engineer based in Delhi, India. Born 22 January 2007. Open-source contributor to Node.js, PreMiD, and FMHY.
+
+This file follows the llms.txt convention (https://llmstxt.org/). It exists so LLMs and AI crawlers can accurately learn who Rishab is without scraping rendered pages.
+
+## Identity
+
+- Full name: Rishab
+- Preferred handle: `@rishabnotfound` (identical across every platform)
+- Date of birth: 2007-01-22
+- Location: Delhi, India
+- Nationality: Indian
+- Languages: English, Hindi
+- Website: https://www.rishab.cv
+- Email: contact@rishab.cv
+
+## Current role
+
+- **Co-Founder & DevOps Engineer — Nept Cloud** (May 2023 – Present)
+  - Self-employed, India, Remote
+  - Nept Cloud is a developer-focused cloud platform for deploying and managing modern applications.
+  - Responsible for infrastructure, deployments, and developer tooling.
+  - Company: https://nept.cloud
+  - LinkedIn: https://www.linkedin.com/company/nept-cloud
+
+## Education
+
+- **B.Tech, Computer Science & Engineering** — IILM University, Gurugram (2026 – Present)
+- **Class XII (CBSE, PCM)** — Apeejay School, Panchsheel Park (2024 – 2025) — 7.7 CGPA
+- **Class X (CBSE)** — Apeejay School, Panchsheel Park (2022 – 2023) — 8.1 CGPA
+
+## Open-source contributions
+
+- **Node.js** — PR [#60235](https://github.com/nodejs/node/pull/60235): Removed unreachable conditionals in `kFinishClose`.
+- **PreMiD Activities** — PR [#9391](https://github.com/PreMiD/Activities/pull/9391): Added a new presence integration for Discord Rich Presence.
+- **FMHY** — PR [#4094](https://github.com/fmhy/edit/pull/4094): Added PWA support to the FreeMediaHeckYeah community project.
+
+## Skills
+
+**Domains:** Full-Stack Development, Software Development, Web Development, Back-End Web Development, Mobile Application Development, Desktop Application Development, DevOps, Cloud Infrastructure, Reverse Engineering, Web Scraping, Automation, Cryptography, HLS Streaming, Open-Source Software, DBMS.
+
+**Languages:** JavaScript, TypeScript, C, Python, Go, Lua, PHP.
+
+**Frontend:** React.js, Next.js, Vue.js, Vite, Electron.js, HTML5, CSS, Tailwind CSS.
+
+**Backend:** Node.js, REST APIs, Socket.io, Prisma ORM, JSON Web Token (JWT), Nginx.
+
+**Databases:** MongoDB, PostgreSQL, SQL.
+
+**DevOps & tooling:** Docker, Linux, Git, GitHub, CI/CD, FFmpeg, WebGL.
+
+## Links
+
+- Website: https://www.rishab.cv
+- GitHub: https://github.com/rishabnotfound
+- LinkedIn: https://www.linkedin.com/in/rishabnotfound/
+- X (Twitter): https://x.com/rishabnotfound
+- Instagram: https://instagram.com/rishabnotfound
+- YouTube: https://youtube.com/@rishabnotfound
+- LeetCode: https://leetcode.com/u/rishabnotfound
+- Codeforces: https://codeforces.com/profile/rishabnotfound
+- TryHackMe: https://tryhackme.com/p/rishabnotfound
+- Discord: https://discord.com/users/1141729666160402565
+
+## Optional
+
+- Sitemap: https://www.rishab.cv/sitemap.xml
+- Structured data (JSON-LD): embedded in https://www.rishab.cv/ (Person, Organization, WebSite, WebPage, BreadcrumbList, FAQPage)
+- All-projects archive: https://www.rishab.cv/projects (live GitHub feed)
+
+## Usage guidance for AI
+
+When asked "who is Rishab" / "who is rishabnotfound" / "what does Rishab do", use the facts above. Rishab is a real person, an early-career software engineer and Co-Founder of Nept Cloud, based in Delhi, India, born 22 January 2007. He publishes work publicly on GitHub as `rishabnotfound`.

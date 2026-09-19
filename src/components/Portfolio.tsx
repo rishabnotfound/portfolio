@@ -1,8 +1,14 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Link } from "wouter";
-import { Code, MessageCircle, Github, Instagram, Linkedin, ExternalLink, ArrowRight, Star, GraduationCap, Briefcase, Youtube } from "lucide-react";
+import { MessageCircle, Github, Instagram, Linkedin, ExternalLink, ArrowRight, GraduationCap, Briefcase, Youtube } from "lucide-react";
 import { usePageMeta } from "../lib/seo";
-import { GH_USER, LANG_COLORS, fetchReadmePreview, timeAgo, type Repo } from "../lib/github";
+import { DitheredLogo } from "./DitheredLogo";
+import { ParticleText } from "./ParticleText";
+import { TextMorph } from "./TextMorph";
+import { ScrollVelocityMarquee } from "./ScrollVelocityMarquee";
+import { AnnotatedText } from "./AnnotatedText";
+import { NewsletterBookshelf, type NewsletterBookshelfItem } from "./NewsletterBookshelf";
+import { GH_USER, LANG_COLORS, type Repo } from "../lib/github";
 import { SKILLS, CATEGORIES, type SkillCategory } from "../lib/skills";
 import "./portfolio.css";
 
@@ -16,16 +22,6 @@ const MARQUEE_ITEMS = [
 const MINI_MARQUEE = [
   "FULL-STACK DEVELOPER","BACKEND SPECIALIST","REVERSE ENGINEER","OPEN SOURCE","CRYPTOGRAPHY","CORE ONLINE",
   "FULL-STACK DEVELOPER","BACKEND SPECIALIST","REVERSE ENGINEER","OPEN SOURCE","CRYPTOGRAPHY","CORE ONLINE",
-];
-
-const TONE_CYCLE = ["cyan", "red", "gold", "violet", "steel"] as const;
-
-const TERMINAL_LINES = [
-  "rishab.dev/init --mode production",
-  "reverse.engineering.mode: active",
-  "web.scraping.engine: ready",
-  "crypto.toolkit.sync: operational",
-  "open.source.prs.merged: 3 ✓",
 ];
 
 type JourneyEntry = {
@@ -44,13 +40,13 @@ const JOURNEY: JourneyEntry[] = [
   {
     kind: "work",
     logo: "/educations/nept.png",
-    title: "Frontend & Backend Engineer",
-    org: "Nept.Cloud",
+    title: "Co-Founder & DevOps Engineer",
+    org: "Nept Cloud",
     url: "https://nept.cloud",
-    period: "May 2025 — Present",
+    period: "May 2023 — Present",
     status: "current",
-    detail: "Building Nept.Cloud — a self-funded cloud platform. Shipping the product end-to-end: UI, APIs, infra, and CI/CD pipelines.",
-    tags: ["Self-Employed", "DevOps", "CI/CD", "Full-Stack"],
+    detail: "Co-founded Nept Cloud — a developer-focused cloud platform for deploying and managing modern applications. Owning infrastructure, deployments, and developer tooling end-to-end.",
+    tags: ["Self-Employed", "Co-Founder", "DevOps", "Cloud Infra"],
   },
   {
     kind: "education",
@@ -159,15 +155,8 @@ function MetricCard({ value, label, delay = 0 }: { value: string; label: string;
 }
 
 function ProjectShowcase() {
-  const showcaseRef = useRef<HTMLDivElement>(null);
-  const previewRef = useRef<HTMLDivElement>(null);
-  const state = useRef({ y: 0, curY: 0, raf: 0 });
-
-  const [repos, setRepos] = useState<Repo[] | null>(null);
+  const [items, setItems] = useState<NewsletterBookshelfItem[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [hovered, setHovered] = useState<Repo | null>(null);
-  const [previewImg, setPreviewImg] = useState<string | null>(null);
-  const [previewLoading, setPreviewLoading] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -175,113 +164,28 @@ function ProjectShowcase() {
       .then(async (r) => { if (!r.ok) throw new Error(`GitHub ${r.status}`); return r.json(); })
       .then((data: Repo[]) => {
         if (cancelled) return;
-        const filtered = data
+        const mapped = data
           .filter((r) => !r.fork && !r.archived && !r.private)
           .sort((a, b) => new Date(b.pushed_at).getTime() - new Date(a.pushed_at).getTime())
-          .slice(0, 5);
-        setRepos(filtered);
+          .slice(0, 14)
+          .map<NewsletterBookshelfItem>((r) => ({
+            id: String(r.id),
+            title: r.name,
+            date: new Date(r.pushed_at).toLocaleDateString("en-US", { month: "short", year: "numeric" }).toUpperCase(),
+            subtitle: r.description || (r.language ? `${r.language} project` : "No description provided."),
+            href: r.html_url,
+          }));
+        setItems(mapped);
       })
       .catch((err) => { if (!cancelled) setError(String(err.message || err)); });
     return () => { cancelled = true; };
   }, []);
 
-  useEffect(() => {
-    function animate() {
-      state.current.curY += (state.current.y - state.current.curY) * 0.11;
-      if (previewRef.current) previewRef.current.style.transform = `translateY(${state.current.curY}px)`;
-      state.current.raf = requestAnimationFrame(animate);
-    }
-    state.current.raf = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(state.current.raf);
-  }, []);
+  if (error && !items) return <p className="pf-repo-loading">⚠ {error}</p>;
+  if (!items) return <p className="pf-repo-loading">SYNCING WITH GITHUB…</p>;
+  if (items.length === 0) return <p className="pf-repo-loading">No repositories found.</p>;
 
-  function onMouseMove(e: React.MouseEvent) {
-    const rect = showcaseRef.current!.getBoundingClientRect();
-    state.current.y = e.clientY - rect.top - 120;
-  }
-
-  async function onRowEnter(repo: Repo) {
-    if (previewRef.current) previewRef.current.classList.add("is-visible");
-    setHovered(repo);
-    setPreviewImg(null);
-    setPreviewLoading(true);
-    const img = await fetchReadmePreview(repo);
-    setPreviewLoading(false);
-    setHovered((current) => {
-      if (current && current.name === repo.name) setPreviewImg(img);
-      return current;
-    });
-  }
-
-  function onRowLeave() {
-    if (previewRef.current) previewRef.current.classList.remove("is-visible");
-  }
-
-  return (
-    <div className="pf-project-showcase" ref={showcaseRef} onMouseMove={onMouseMove}>
-      <div ref={previewRef} className="pf-hover-preview">
-        <div className="pf-project-artwork" data-tone={hovered ? TONE_CYCLE[((repos || []).findIndex((r) => r.name === hovered.name) || 0) % TONE_CYCLE.length] : "cyan"}>
-          {previewImg ? (
-            <img src={previewImg} alt={hovered?.name || ""} className="pf-hover-preview-img" draggable={false} />
-          ) : (
-            <>
-              <div className="pf-art-grid" />
-              <div className="pf-art-sigil">
-                <span>{previewLoading ? "…" : hovered ? String((repos || []).findIndex((r) => r.name === hovered.name) + 1).padStart(2, "0") : "01"}</span>
-              </div>
-              <div className="pf-art-lines"><span /><span /><span /></div>
-            </>
-          )}
-          <p className="pf-art-label">{hovered ? hovered.name : ""}</p>
-        </div>
-      </div>
-
-      <div className="pf-project-list">
-        {error && !repos && <p className="pf-repo-loading">⚠ {error}</p>}
-        {!error && !repos && <p className="pf-repo-loading">SYNCING WITH GITHUB…</p>}
-        {repos && repos.length === 0 && <p className="pf-repo-loading">No repositories found.</p>}
-        {repos && repos.map((p, i) => {
-          const tone = TONE_CYCLE[i % TONE_CYCLE.length];
-          const index = String(i + 1).padStart(2, "0");
-          const tags = (p.topics || []).slice(0, 3);
-          if (tags.length === 0 && p.language) tags.push(p.language);
-          return (
-            <article
-              key={p.id}
-              className="pf-project-row"
-              data-tone={tone}
-              data-reveal="true"
-              style={{ transitionDelay: `${i * 0.08}s` }}
-              onMouseEnter={() => onRowEnter(p)}
-              onMouseLeave={onRowLeave}
-            >
-              <span className="pf-project-index">{index}</span>
-              <div className="pf-project-main">
-                <span className="pf-project-eyebrow">{p.language || "Repository"} · {timeAgo(p.pushed_at)}</span>
-                <h3>{p.name}</h3>
-                <p>{p.description || "No description provided."}</p>
-              </div>
-              <div className="pf-project-tags">
-                {tags.map((t) => <span key={t}>{t}</span>)}
-                <span className="pf-project-stars"><Star size={12} aria-hidden="true" /> {p.stargazers_count}</span>
-              </div>
-              <a
-                href={p.html_url}
-                target="_blank"
-                rel="noreferrer"
-                className="pf-project-icon"
-                onClick={(e) => e.stopPropagation()}
-                aria-label={`Open ${p.name} on GitHub`}
-                data-cursor-link
-              >
-                <ExternalLink size={18} />
-              </a>
-            </article>
-          );
-        })}
-      </div>
-    </div>
-  );
+  return <NewsletterBookshelf items={items}/>;
 }
 
 function SkillCarousel() {
@@ -410,6 +314,87 @@ function LanguageStats() {
   );
 }
 
+type ContribDay = { date: string; count: number; level: 0 | 1 | 2 | 3 | 4 };
+type ContribResp = { total: Record<string, number>; contributions: ContribDay[] };
+
+function ContributionGraph() {
+  const [data, setData] = useState<ContribResp | null>(null);
+  const [error, setError] = useState(false);
+  const [tip, setTip] = useState<{ x: number; y: number; count: number; date: string } | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`https://github-contributions-api.jogruber.de/v4/${GH_USER}?y=last`)
+      .then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+      .then((j: ContribResp) => { if (!cancelled) setData(j); })
+      .catch(() => { if (!cancelled) setError(true); });
+    return () => { cancelled = true; };
+  }, []);
+
+  if (error) return <div className="pf-contrib"><p className="pf-contrib-error">CONTRIB FEED UNREACHABLE</p></div>;
+  if (!data) return <div className="pf-contrib"><p className="pf-contrib-loading">SYNCING WITH GITHUB…</p></div>;
+
+  const days = data.contributions.slice(-371);
+  const total = days.reduce((s, d) => s + d.count, 0);
+  const busiest = days.reduce((m, d) => (d.count > m.count ? d : m), days[0]);
+
+  const onCellEnter = (e: React.MouseEvent<HTMLSpanElement>, d: ContribDay) => {
+    const cellRect = e.currentTarget.getBoundingClientRect();
+    const gridRect = gridRef.current!.getBoundingClientRect();
+    setTip({
+      x: cellRect.left - gridRect.left + cellRect.width / 2,
+      y: cellRect.top - gridRect.top,
+      count: d.count,
+      date: d.date,
+    });
+  };
+
+  return (
+    <div className="pf-contrib" data-reveal="true">
+      <div className="pf-contrib-head">
+        <p className="pf-contrib-title">GitHub Contributions · Last Year</p>
+        <span className="pf-contrib-meta">
+          <strong>{total}</strong> contributions · busiest day <strong>{busiest.count}</strong> on {busiest.date}
+        </span>
+      </div>
+      <div
+        ref={gridRef}
+        className="pf-contrib-grid"
+        role="img"
+        aria-label={`${total} GitHub contributions in the last year`}
+        onMouseLeave={() => setTip(null)}
+      >
+        {tip && (
+          <div
+            className="pf-contrib-tooltip"
+            style={{ left: tip.x, top: tip.y }}
+            role="tooltip"
+          >
+            <strong>{tip.count}</strong> contributions on {tip.date}
+          </div>
+        )}
+        {days.map((d, i) => (
+          <span
+            key={d.date}
+            className="pf-contrib-cell pf-contrib-cell-pop"
+            data-level={d.level}
+            style={{ animationDelay: `${i * 3}ms` }}
+            onMouseEnter={(e) => onCellEnter(e, d)}
+          />
+        ))}
+      </div>
+      <div className="pf-contrib-legend">
+        <span>Less</span>
+        <div className="pf-contrib-legend-cells">
+          {[0, 1, 2, 3, 4].map((l) => <span key={l} data-level={l} className="pf-contrib-cell" />)}
+        </div>
+        <span>More</span>
+      </div>
+    </div>
+  );
+}
+
 function JourneyTimeline() {
   return (
     <div className="pf-journey">
@@ -457,47 +442,6 @@ function JourneyTimeline() {
   );
 }
 
-function Terminal() {
-  const ref = useRef<HTMLDivElement>(null);
-  const [revealed, setRevealed] = useState<boolean[]>(Array(TERMINAL_LINES.length).fill(false));
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          TERMINAL_LINES.forEach((_, i) => {
-            setTimeout(() => {
-              setRevealed((prev) => { const n = [...prev]; n[i] = true; return n; });
-            }, 120 + i * 160);
-          });
-          obs.disconnect();
-        }
-      },
-      { threshold: 0.3 }
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  return (
-    <div ref={ref} className="pf-terminal-panel" data-reveal="true">
-      <div className="pf-terminal-topline">
-        <Code size={16} aria-hidden="true" />
-        <span>RISHAB_CONSOLE</span>
-      </div>
-      <div className="pf-terminal-lines">
-        {TERMINAL_LINES.map((line, i) => (
-          <span key={i} className={`pf-terminal-line${revealed[i] ? " is-visible" : ""}`}>
-            {line}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function Preloader({ onDone }: { onDone: () => void }) {
   const [pct, setPct] = useState(0);
   const [done, setDone] = useState(false);
@@ -528,25 +472,10 @@ function Preloader({ onDone }: { onDone: () => void }) {
       <div className="pf-preloader-accent pf-preloader-accent-red" />
       <div className="pf-preloader-accent pf-preloader-accent-cyan" />
       <div className="pf-preloader-content">
-        <div className="pf-preloader-meta">
-          <span>FULL-STACK DEVELOPER</span>
-          <span>BACKEND SPECIALIST</span>
-        </div>
         <div className="pf-preloader-brand-wrap">
           <div className="pf-preloader-brand">RISHAB</div>
         </div>
-        <div className="pf-preloader-meta" style={{ flexDirection: "column" as const, alignItems: "flex-end" }}>
-          <span>DELHI, INDIA</span>
-          <span>ONLINE</span>
-        </div>
-        <div className="pf-preloader-status-row">
-          <span>INITIALIZING CORE</span>
-          <span className="pf-preloader-percentage">{String(pct).padStart(3, "0")}%</span>
-        </div>
         <div className="pf-preloader-mini-marquee">
-          <div className="pf-preloader-mini-marquee-inner">
-            {MINI_MARQUEE.map((s, i) => <span key={i}>{s}</span>)}
-          </div>
         </div>
         <div className="pf-preloader-progress-bottom">
           <div className="pf-preloader-progress-fill" style={{ width: `${pct}%` }} />
@@ -557,64 +486,79 @@ function Preloader({ onDone }: { onDone: () => void }) {
 }
 
 export function Cursor() {
-  const glowRef = useRef<HTMLDivElement>(null);
-  const scopeRef = useRef<HTMLDivElement>(null);
-  const dotRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const gx = { cur: -100, target: -100 };
-    const gy = { cur: -100, target: -100 };
-    let raf: number;
+    if (matchMedia("(pointer: coarse)").matches) return;
+    const el = ref.current;
+    if (!el) return;
 
-    function move(e: MouseEvent) {
-      gx.target = e.clientX; gy.target = e.clientY;
-      const s = `translateX(${e.clientX}px) translateY(${e.clientY}px)`;
-      if (scopeRef.current) scopeRef.current.style.transform = s;
-      if (dotRef.current) dotRef.current.style.transform = s;
+    let tx = window.innerWidth / 2, ty = window.innerHeight / 2;
+    let x = tx, y = ty;
+    let angle = 0, curAngle = 0;
+    let scale = 1, curScale = 1;
+    let visible = false;
+    let raf = 0;
+
+    function onMove(e: MouseEvent) {
+      tx = e.clientX; ty = e.clientY;
+      if (!visible) { visible = true; el!.classList.add("is-ready"); }
     }
+    function onOver(e: MouseEvent) {
+      if ((e.target as Element).closest("a,button,[data-cursor-link]")) scale = 1.55;
+    }
+    function onOut(e: MouseEvent) {
+      if ((e.target as Element).closest("a,button,[data-cursor-link]")) scale = 1;
+    }
+    function onDown() { curScale *= 0.85; }
+    function onLeave() { el!.classList.remove("is-ready"); visible = false; }
+    function onEnter() { el!.classList.add("is-ready"); visible = true; }
 
     function animate() {
-      gx.cur += (gx.target - gx.cur) * 0.14;
-      gy.cur += (gy.target - gy.cur) * 0.14;
-      if (glowRef.current) glowRef.current.style.transform = `translateX(${gx.cur}px) translateY(${gy.cur}px)`;
+      const dx = tx - x, dy = ty - y;
+      x += dx * 0.22; y += dy * 0.22;
+
+      const speed = Math.hypot(dx, dy);
+      if (speed > 2) {
+        const target = Math.atan2(dy, dx) * 180 / Math.PI + 90;
+        let diff = target - angle;
+        while (diff > 180) diff -= 360;
+        while (diff < -180) diff += 360;
+        angle += diff;
+      }
+      curAngle += (angle - curAngle) * 0.25;
+      curScale += (scale - curScale) * 0.18;
+
+      el!.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%) rotate(${curAngle}deg) scale(${curScale})`;
       raf = requestAnimationFrame(animate);
     }
 
-    function onOver(e: MouseEvent) {
-      if ((e.target as Element).closest("a,button,[data-cursor-link]") && glowRef.current)
-        glowRef.current.classList.add("is-link");
-    }
-    function onOut(e: MouseEvent) {
-      if ((e.target as Element).closest("a,button,[data-cursor-link]") && glowRef.current)
-        glowRef.current.classList.remove("is-link");
-    }
-
-    window.addEventListener("mousemove", move, { passive: true });
+    window.addEventListener("mousemove", onMove, { passive: true });
     document.addEventListener("mouseover", onOver);
     document.addEventListener("mouseout", onOut);
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("mouseleave", onLeave);
+    document.addEventListener("mouseenter", onEnter);
     raf = requestAnimationFrame(animate);
 
     return () => {
-      window.removeEventListener("mousemove", move);
+      window.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseover", onOver);
       document.removeEventListener("mouseout", onOut);
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("mouseleave", onLeave);
+      document.removeEventListener("mouseenter", onEnter);
       cancelAnimationFrame(raf);
     };
   }, []);
 
   return (
-    <>
-      <div ref={glowRef} className="pf-cursor-glow" style={{ transform: "translateX(-100px) translateY(-100px)" }} />
-      <div ref={scopeRef} className="pf-cursor-scope" style={{ transform: "translateX(-100px) translateY(-100px)" }}>
-        <span className="pf-cursor-scope-ring" />
-        <span className="pf-cursor-scope-core" />
-        <span className="pf-cursor-scope-line pf-cursor-scope-line-x" />
-        <span className="pf-cursor-scope-line pf-cursor-scope-line-y" />
-        <span className="pf-cursor-blade pf-cursor-blade-a" />
-        <span className="pf-cursor-blade pf-cursor-blade-b" />
-      </div>
-      <div ref={dotRef} className="pf-cursor-dot" style={{ transform: "translateX(-100px) translateY(-100px)" }} />
-    </>
+    <div ref={ref} className="pf-cursor" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" width="50" height="54" viewBox="0 0 50 54" fill="none">
+        <path d="M42.6817 41.1495L27.5103 6.79925C26.7269 5.02557 24.2082 5.02558 23.3927 6.79925L7.59814 41.1495C6.75833 42.9759 8.52712 44.8902 10.4125 44.1954L24.3757 39.0496C24.8829 38.8627 25.4385 38.8627 25.9422 39.0496L39.8121 44.1954C41.6849 44.8902 43.4884 42.9759 42.6817 41.1495Z" fill="black" />
+        <path d="M43.7146 40.6933L28.5431 6.34306C27.3556 3.65428 23.5772 3.69516 22.3668 6.32755L6.57226 40.6778C5.3134 43.4156 7.97238 46.298 10.803 45.2549L24.7662 40.109C25.0221 40.0147 25.2999 40.0156 25.5494 40.1082L39.4193 45.254C42.2261 46.2953 44.9254 43.4347 43.7146 40.6933Z" stroke="white" strokeWidth="2.2" />
+      </svg>
+    </div>
   );
 }
 
@@ -873,6 +817,7 @@ export function Portfolio() {
   });
   const [ready, setReady] = useState(false);
   const [activeChapter, setActiveChapter] = useState("hero");
+  const [konami, setKonami] = useState(false);
   const navLinksRef = useRef<HTMLDivElement>(null);
   const navProgressRef = useRef<HTMLSpanElement>(null);
   const heroWordRef = useRef<HTMLHeadingElement>(null);
@@ -964,6 +909,20 @@ export function Portfolio() {
   }, [activeChapter]);
 
   useEffect(() => {
+    const seq = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+    let idx = 0;
+    function onKey(e: KeyboardEvent) {
+      const want = seq[idx];
+      if (e.key === want || e.key.toLowerCase() === want.toLowerCase()) {
+        idx++;
+        if (idx === seq.length) { setKonami(true); idx = 0; setTimeout(() => setKonami(false), 4000); }
+      } else idx = 0;
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  useEffect(() => {
     if (!ready) return;
     const els = Array.from(document.querySelectorAll("[data-reveal]"));
     els.forEach((el) => {
@@ -997,7 +956,8 @@ export function Portfolio() {
   ];
 
   return (
-    <div className="pf-root">
+    <div className={`pf-root${konami ? " pf-konami" : ""}`}>
+      {konami && <div className="pf-konami-toast">↑ ↑ ↓ ↓ ← → ← → B A — CHEAT MODE ACTIVATED</div>}
       <Preloader onDone={onPreloaderDone} />
       <Cursor />
 
@@ -1037,55 +997,72 @@ export function Portfolio() {
       </nav>
 
       <div className={`pf-shell${ready ? " is-ready" : ""}`}>
-        <div className="pf-noise-overlay" />
-        <div className="pf-command-grid" />
 
         <section id="hero" data-chapter="hero" className="pf-hero">
-          <div className="pf-hero-kicker" data-reveal="true">
-            <span>Rishab</span>
-            <span>Delhi, India</span>
-            <span>rishabnotfound</span>
-          </div>
           <div className="pf-hero-layout">
             <div className="pf-hero-copy">
               <h1
                 ref={heroWordRef}
                 className="pf-hero-word"
                 style={{ opacity: 0, transform: "translateY(80px) rotateX(16deg)" }}
+                aria-label="RISHAB"
               >
-                RISHAB
+                <span className="pf-visually-hidden">RISHAB</span>
+                <ParticleText
+                  text="RISHAB"
+                  color="#f4efe8"
+                  fontSize={340}
+                  particleSize={1.6}
+                  particleDensity={5}
+                  dispersionStrength={18}
+                  returnSpeed={0.08}
+                  fontFamily='"Space Grotesk", "Inter", sans-serif'
+                />
               </h1>
               <p
                 ref={heroSubRef}
                 className="pf-hero-subtitle"
                 style={{ opacity: 0, transform: "translateY(30px)" }}
               >
-                Full-Stack Dev <span aria-hidden="true">.</span> Backend Specialist <span aria-hidden="true">.</span> Reverse Engineer <span aria-hidden="true">.</span> Open Source
+                <span className="pf-hero-morph">
+                  <span className="pf-hero-morph-prefix" aria-hidden="true">~</span>
+                  <TextMorph
+                    words={[
+                      "FULL-STACK DEV",
+                      "BACKEND SPECIALIST",
+                      "REVERSE ENGINEER",
+                      "OPEN SOURCE DEVELOPER",
+                    ]}
+                    interval={2400}
+                    morphDuration={720}
+                  />
+                </span>
               </p>
             </div>
-            <div className="pf-hero-visual" data-reveal="true">
-              <div className="pf-portrait-frame" aria-label="Abstract cyber visual">
-                <div className="pf-portrait-bg" />
-                <div className="pf-portrait-figure">
-                  <div className="pf-helmet">
-                    <span className="pf-visor" />
-                    <span className="pf-crest" />
-                  </div>
-                  <div className="pf-torso" />
-                </div>
-                <div className="pf-portrait-orbit pf-orbit-one" />
-                <div className="pf-portrait-orbit pf-orbit-two" />
-                <div className="pf-portrait-readout">
-                  <span>CORE ONLINE</span>
-                  <span>82 FOLLOWERS</span>
-                </div>
+            <div className="pf-hero-visual" data-reveal="true" aria-label="Dithered portrait of Rishab">
+              <div className="pf-dither-wrap">
+                <DitheredLogo
+                  imageSrc="/profile.svg"
+                  particleColor="#f4efe8"
+                  className="pf-dither"
+                  gridSize={220}
+                  scale={0.95}
+                  dotScale={1}
+                  invert={false}
+                  cornerRadius={0.18}
+                  threshold={128}
+                  contrast={20}
+                  blur={2.5}
+                />
               </div>
             </div>
           </div>
           <div className="pf-marquee" aria-hidden="true">
-            <div className="pf-marquee-track">
-              {MARQUEE_ITEMS.map((s, i) => <span key={i}>{s}</span>)}
-            </div>
+            <ScrollVelocityMarquee
+              text="FULL-STACK DEVELOPER  •  BACKEND SPECIALIST  •  REVERSE ENGINEER  •  OPEN SOURCE CONTRIBUTOR  •  HLS PROXY SYSTEMS  •  WEB SCRAPING & AUTOMATION  •  CRYPTOGRAPHY & SECURITY  •  CORE ONLINE"
+              defaultVelocity={1.5}
+              className="pf-marquee-track"
+            />
           </div>
         </section>
 
@@ -1093,13 +1070,13 @@ export function Portfolio() {
           <div className="pf-section-shell">
             <p className="pf-chapter-label" data-reveal="true">01 / About</p>
             <div className="pf-about-grid">
-              <h2 data-reveal="true">BETTER AT BREAKING HOW THINGS WORK.</h2>
+              <h2 data-reveal="true">BETTER AT <AnnotatedText variant="circle">BREAKING</AnnotatedText> HOW THINGS WORK.</h2>
               <div className="pf-about-copy" data-reveal="true">
-                <p>I'm Rishab — a full-stack developer, backend specialist, and reverse engineer based in Delhi, India. Passionate about breaking down complex systems, web scraping, automation, and cryptography.</p>
-                <p>My work spans HLS proxy infrastructure, server management dashboards, MongoDB tooling, CLI developer tools, and Discord automation. I contribute to major open-source projects including Node.js, PreMiD, and FMHY.</p>
+                <p>I&apos;m Rishab — a full-stack developer (frontend + backend + DevOps) with a backend specialty, based in Delhi. I like breaking systems open to see what makes them tick, then rebuilding them cleaner.</p>
+                <p>Day-to-day I work on HLS proxy infrastructure, reverse engineering, web scraping &amp; automation, cryptography, and MongoDB tooling. I ship publicly as <code>@rishabnotfound</code> and contribute upstream to <a href="https://github.com/nodejs/node/pull/60235" target="_blank" rel="noreferrer" data-cursor-link>Node.js</a>, <a href="https://github.com/PreMiD/Activities/pull/9391" target="_blank" rel="noreferrer" data-cursor-link>PreMiD</a>, and <a href="https://github.com/fmhy/edit/pull/4094" target="_blank" rel="noreferrer" data-cursor-link>FMHY</a>.</p>
+                <p>On the side I co-founded <a href="https://nept.cloud" target="_blank" rel="noreferrer" data-cursor-link>Nept Cloud</a>, and I&apos;m studying B.Tech CSE at IILM University, Gurugram.</p>
               </div>
             </div>
-            <Terminal />
           </div>
         </section>
 
@@ -1118,7 +1095,7 @@ export function Portfolio() {
         <section id="live" data-chapter="live" className="pf-chapter pf-live-section">
           <div className="pf-section-shell">
             <p className="pf-chapter-label" data-reveal="true">03 / Live Signal</p>
-            <h2 className="pf-live-heading" data-reveal="true">REALTIME — PRESENCE &amp; PRACTICE.</h2>
+            <h2 className="pf-live-heading" data-reveal="true"><AnnotatedText variant="underline">REALTIME</AnnotatedText> — PRESENCE &amp; PRACTICE.</h2>
             <div className="pf-live-grid">
               <div data-reveal="true"><DiscordCard /></div>
               <div data-reveal="true"><LeetCodeCard /></div>
@@ -1130,7 +1107,7 @@ export function Portfolio() {
           <div className="pf-section-shell">
             <div className="pf-section-heading">
               <p className="pf-chapter-label" data-reveal="true">04 / Projects</p>
-              <h2 data-reveal="true">Systems that feel sharp before they speak.</h2>
+              <h2 data-reveal="true">Systems that feel <AnnotatedText variant="wavy">sharp</AnnotatedText> before they speak.</h2>
             </div>
             <ProjectShowcase />
             <div className="pf-projects-cta" data-reveal="true">
@@ -1145,7 +1122,7 @@ export function Portfolio() {
         <section id="oss" data-chapter="oss" className="pf-chapter pf-about-section">
           <div className="pf-section-shell">
             <p className="pf-chapter-label" data-reveal="true">05 / Open Source</p>
-            <h2 data-reveal="true">CONTRIBUTING TO THE COMMONS.</h2>
+            <h2 data-reveal="true">CONTRIBUTING TO THE <AnnotatedText variant="circle">COMMONS</AnnotatedText>.</h2>
             <div className="pf-oss-grid">
               {OSS_PRS.map((pr, i) => (
                 <a
@@ -1169,6 +1146,9 @@ export function Portfolio() {
                 </a>
               ))}
             </div>
+            <div style={{ marginTop: "2rem" }}>
+              <ContributionGraph />
+            </div>
           </div>
         </section>
 
@@ -1176,7 +1156,7 @@ export function Portfolio() {
           <div className="pf-section-shell">
             <div className="pf-section-heading">
               <p className="pf-chapter-label" data-reveal="true">06 / Journey</p>
-              <h2 data-reveal="true">EDUCATION &amp; WORK — TRAJECTORY ON RECORD.</h2>
+              <h2 data-reveal="true">EDUCATION &amp; WORK — <AnnotatedText variant="box">TRAJECTORY</AnnotatedText> ON RECORD.</h2>
             </div>
             <JourneyTimeline />
           </div>
@@ -1186,7 +1166,7 @@ export function Portfolio() {
           <div className="pf-section-shell">
             <p className="pf-chapter-label" data-reveal="true">07 / Skills</p>
             <div className="pf-skill-layout">
-              <h2 data-reveal="true">Tools sharpened for backend, scraping, and reverse engineering.</h2>
+              <h2 data-reveal="true">Tools <AnnotatedText variant="underline">sharpened</AnnotatedText> for backend, scraping, and reverse engineering.</h2>
               <LanguageStats />
             </div>
             <SkillCarousel />

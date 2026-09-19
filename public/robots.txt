@@ -2,4 +2,28 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
 Sitemap: https://www.rishab.cv/sitemap.xml
+
+# LLM-friendly summary (llms.txt convention — https://llmstxt.org/)
+# https://www.rishab.cv/llms.txt
