@@ -4,7 +4,7 @@ Cinematic personal portfolio. Vite + React + TypeScript SPA, deployed on Vercel 
 
 ## Preview
 
-<img width="2936" height="1678" alt="image" src="https://github.com/user-attachments/assets/720d9248-f045-43c2-a268-4f929ace8ca8" />
+<img width="2938" height="1678" alt="image" src="https://github.com/user-attachments/assets/f8d08a74-7241-4835-950b-da5a0ecbd288" />
 
 ### Stack
 
