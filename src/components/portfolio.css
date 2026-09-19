@@ -27,8 +27,8 @@
   pointer-events: none;
 }
 .pf-app-shader canvas { width: 100% !important; height: 100% !important; display: block; }
-html { background: transparent; }
-body { background: transparent !important; }
+html { background: #000; }
+body { background: #000 !important; }
 .pf-root, .pf-shell { background: transparent !important; }
 
 /* ── PRELOADER ── */
