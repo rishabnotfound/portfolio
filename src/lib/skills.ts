@@ -47,6 +47,7 @@ export const SKILLS: Skill[] = [
   { category: "Backend", name: "JWT", icon: si("jsonwebtokens") },
 
   { category: "Databases", name: "MongoDB", icon: dev("mongodb") },
+  { category: "Databases", name: "Redis", icon: dev("redis") },
   { category: "Databases", name: "MySQL", icon: dev("mysql") },
   { category: "Databases", name: "Prisma", icon: dev("prisma") },
   { category: "Databases", name: "Firebase", icon: dev("firebase", "plain") },
