@@ -1089,8 +1089,8 @@ export function Portfolio() {
             <p className="pf-chapter-label" data-reveal="true">02 / Numbers</p>
             <div className="pf-metrics-grid">
               <MetricCard value="27"  label="Public GitHub Repos"       delay={0} />
-              <MetricCard value="82"  label="GitHub Followers"          delay={100} />
-              <MetricCard value="60+" label="Total Stars Earned"        delay={200} />
+              <MetricCard value="103+"  label="GitHub Followers"          delay={100} />
+              <MetricCard value="112+" label="Total Stars Earned"        delay={200} />
               <MetricCard value="3"   label="OSS PRs Merged to Major Projects" delay={300} />
             </div>
           </div>
