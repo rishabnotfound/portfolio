@@ -399,6 +399,17 @@ body { background: transparent !important; }
 }
 .pf-about-copy { color: #f4efe8b8; display: grid; gap: 1.2rem; max-width: 720px; font-size: clamp(1.08rem,2vw,1.45rem); line-height: 1.55; }
 .pf-about-copy p { margin: 0; }
+.pf-about-lead { display: grid; gap: clamp(2rem, 4vw, 3rem); }
+.pf-about-lead-copy {
+  display: grid; gap: 1.1rem;
+  color: #f4efe8a8;
+  font-size: clamp(0.98rem, 1.3vw, 1.08rem);
+  line-height: 1.6;
+  max-width: 46ch;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--line);
+}
+.pf-about-lead-copy p { margin: 0; }
 .pf-terminal-panel { background: linear-gradient(135deg,#39e8ff14,#ff3c3c0f); border: 1px solid #39e8ff3d; margin-top: clamp(3rem,8vw,7rem); overflow: hidden; }
 .pf-terminal-topline { border-bottom: 1px solid var(--line); color: var(--cyan); font-family: var(--font-mono); letter-spacing: 0.12em; display: flex; align-items: center; gap: 0.6rem; padding: 0.9rem 1rem; font-size: 0.75rem; }
 .pf-terminal-lines { color: #f4efe8b8; font-family: var(--font-mono); display: grid; gap: 0.65rem; padding: clamp(1rem,3vw,1.6rem); font-size: clamp(0.78rem,1.6vw,1rem); }

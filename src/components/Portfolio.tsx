@@ -811,8 +811,8 @@ function LeetCodeCard() {
 
 export function Portfolio() {
   usePageMeta({
-    title: "Rishab — Full-Stack Developer, Backend Specialist & Reverse Engineer",
-    description: "Rishab — full-stack developer and backend specialist from Delhi, India. HLS proxies, dev tooling, reverse-engineered systems, open-source contributions to Node.js, PreMiD, and FMHY.",
+    title: "Rishab Gautam — Software Developer, Entrepreneur & Co-Founder of Nept Cloud",
+    description: "Rishab Gautam (rishabnotfound) — software developer & entrepreneur from Delhi, India. Co-Founder of Nept Cloud. Ships production infrastructure used by hundreds of thousands: Layla, Syella, MakimaKey, DeltaSys, Commitify. Upstream in Node.js, PreMiD, FMHY.",
     path: "/",
   });
   const [ready, setReady] = useState(false);
@@ -1070,11 +1070,15 @@ export function Portfolio() {
           <div className="pf-section-shell">
             <p className="pf-chapter-label" data-reveal="true">01 / About</p>
             <div className="pf-about-grid">
-              <h2 data-reveal="true">BETTER AT <AnnotatedText variant="circle">BREAKING</AnnotatedText> HOW THINGS WORK.</h2>
+              <div className="pf-about-lead" data-reveal="true">
+                <h2>BETTER AT <AnnotatedText variant="circle">BREAKING</AnnotatedText> HOW THINGS WORK.</h2>
+                <div className="pf-about-lead-copy">
+                  <p>I&apos;m Rishab — a full-stack developer (frontend + backend + DevOps) with a backend specialty, based in Delhi. I like breaking systems open to see what makes them tick, then rebuilding them cleaner.</p>
+                  <p>On the side I co-founded <a href="https://nept.cloud" target="_blank" rel="noreferrer" data-cursor-link>Nept Cloud</a>, and I&apos;m studying B.Tech CSE at IILM University, Gurugram. Born <time dateTime="2007-01-22">22 Jan 2007</time>.</p>
+                </div>
+              </div>
               <div className="pf-about-copy" data-reveal="true">
-                <p>I&apos;m Rishab — a full-stack developer (frontend + backend + DevOps) with a backend specialty, based in Delhi. I like breaking systems open to see what makes them tick, then rebuilding them cleaner.</p>
-                <p>Day-to-day I work on HLS proxy infrastructure, reverse engineering, web scraping &amp; automation, cryptography, and MongoDB tooling. I ship publicly as <code>@rishabnotfound</code> and contribute upstream to <a href="https://github.com/nodejs/node/pull/60235" target="_blank" rel="noreferrer" data-cursor-link>Node.js</a>, <a href="https://github.com/PreMiD/Activities/pull/9391" target="_blank" rel="noreferrer" data-cursor-link>PreMiD</a>, and <a href="https://github.com/fmhy/edit/pull/4094" target="_blank" rel="noreferrer" data-cursor-link>FMHY</a>.</p>
-                <p>On the side I co-founded <a href="https://nept.cloud" target="_blank" rel="noreferrer" data-cursor-link>Nept Cloud</a>, and I&apos;m studying B.Tech CSE at IILM University, Gurugram.</p>
+                <p>I build production-grade developer infrastructure end-to-end under <code>@rishabnotfound</code>: <a href="https://github.com/rishabnotfound/Layla" target="_blank" rel="noreferrer" data-cursor-link>Layla</a> — a free web-push platform powering 50–60 major sites with a combined 150–160k subscribers and 256.8k+ notifications delivered, engineered to handle millions of requests per second; <a href="https://github.com/rishabnotfound/Syella" target="_blank" rel="noreferrer" data-cursor-link>Syella</a> — a cross-platform Windows &amp; macOS terminal that out-performs MobaXterm and Termius combined, with a growing daily-user base; <a href="https://github.com/rishabnotfound/MakimaKey" target="_blank" rel="noreferrer" data-cursor-link>MakimaKey</a> — a fully-offline, end-to-end-encrypted TOTP authenticator for Android, running on 3–4k devices across every supported Android version; <a href="https://github.com/rishabnotfound/DeltaSys" target="_blank" rel="noreferrer" data-cursor-link>DeltaSys</a> — MobaXterm reimagined in the browser: a real-time VPS control plane with full SSH + xterm.js terminal emulation; <a href="https://github.com/rishabnotfound/RezePlayer" target="_blank" rel="noreferrer" data-cursor-link>RezePlayer</a> — a standalone HLS/MP4 video engine with watch-party sync, Chromecast, and automatic thumbnail generation; <a href="https://github.com/rishabnotfound/MongoSync" target="_blank" rel="noreferrer" data-cursor-link>MongoSync</a> — a modern MongoDB admin surface; <a href="https://github.com/rishabnotfound/Commitify" target="_blank" rel="noreferrer" data-cursor-link>Commitify</a> — a production-grade GitHub contribution-graph painter with smart commit scheduling, used by hundreds to automate their green squares; and <a href="https://github.com/rishabnotfound/Maki-HLS-Proxy-LIGHTEST" target="_blank" rel="noreferrer" data-cursor-link>Maki-HLS-Proxy</a> — the world&apos;s first HLS proxy written in pure Lua + nginx, the lightest stack possible. Underneath it all: reverse-engineering closed protocols, applied cryptography, resilient scraping pipelines, and HLS streaming infrastructure — with upstream contributions merged into <a href="https://github.com/nodejs/node/pull/60235" target="_blank" rel="noreferrer" data-cursor-link>Node.js</a>, <a href="https://github.com/PreMiD/Activities/pull/9391" target="_blank" rel="noreferrer" data-cursor-link>PreMiD</a>, and <a href="https://github.com/fmhy/edit/pull/4094" target="_blank" rel="noreferrer" data-cursor-link>FMHY</a>.</p>
               </div>
             </div>
           </div>

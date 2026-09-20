@@ -85,8 +85,8 @@ function HoverPreview({ image, repo }: { image: string | null; repo: Repo | null
 
 export default function ProjectsPage() {
   usePageMeta({
-    title: "All Projects — Rishab",
-    description: "Complete archive of Rishab's GitHub repositories — full-stack, backend, infrastructure, and developer tooling. Live README previews on hover.",
+    title: "All Projects — Rishab Gautam",
+    description: "Complete archive of Rishab Gautam's public work — production infrastructure (Layla, Syella, MakimaKey, DeltaSys, Commitify, RezePlayer, MongoSync, Maki-HLS-Proxy) and every public GitHub repository. Live README previews on hover.",
     path: "/projects",
   });
   const [repos, setRepos] = useState<Repo[] | null>(null);
