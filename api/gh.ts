@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { proxyGithub } from "./_github";
+import { proxyGithub } from "./_github.js";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const url = new URL(req.url || "/", "http://x");

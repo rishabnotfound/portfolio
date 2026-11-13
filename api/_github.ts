@@ -1,5 +1,6 @@
-import config from "../portfolio.config.json";
+import { readFileSync } from "node:fs";
 
+const config = JSON.parse(readFileSync(new URL("../portfolio.config.json", import.meta.url), "utf8")) as { accounts: { github: string } };
 const OWNER = config.accounts.github;
 
 type Result = { status: number; contentType: string; body: Buffer };
