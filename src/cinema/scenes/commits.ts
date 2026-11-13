@@ -103,6 +103,7 @@ export function createCommits(ctx: Ctx): Chapter {
   ground.position.set(WEEKS / 2, -0.001, 3);
   scene.add(ground);
 
+  let grow = 0;
   function apply(days: Day[]) {
     const lastDow = new Date(days[days.length - 1].date + "T00:00:00Z").getUTCDay();
     const offset = N - 1 - (6 - lastDow);
@@ -125,7 +126,6 @@ export function createCommits(ctx: Ctx): Chapter {
   sync();
   const unsub = subscribe(sync);
 
-  let grow = 0;
   const look = new THREE.Vector3();
   return {
     scene, camera,
