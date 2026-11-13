@@ -2,6 +2,8 @@
 
 Cinematic, scroll-driven 3D portfolio built with Vite, React and three.js. Live at [rishab.cv](https://www.rishab.cv).
 
+<img width="1467" height="841" alt="Screenshot 2026-11-13 at 5 34 37 AM" src="https://github.com/user-attachments/assets/1a94abfe-7057-483b-824c-15845b1d0dd9" />
+
 ## Make it yours
 
 Fork it, then edit **one file**: [`portfolio.config.json`](./portfolio.config.json). Everything personal lives there — the site, the
