@@ -1,52 +1,68 @@
 # Rishab — Portfolio
 
-Cinematic personal portfolio. Vite + React + TypeScript SPA, deployed on Vercel at [rishab.cv](https://www.rishab.cv).
+Cinematic, scroll-driven 3D portfolio built with Vite, React and three.js. Live at [rishab.cv](https://www.rishab.cv).
 
-## Preview
+## Make it yours
 
-<img width="2938" height="1678" alt="image" src="https://github.com/user-attachments/assets/f8d08a74-7241-4835-950b-da5a0ecbd288" />
+Fork it, then edit **one file**: [`portfolio.config.json`](./portfolio.config.json). Everything personal lives there — the site, the
+serverless functions and all SEO output (meta tags, JSON-LD, crawler text, `llms.txt`, `sitemap.xml`, `robots.txt`) are generated from it.
 
-### Stack
+| Key | What it drives |
+|---|---|
+| `site` | Domain, page title, meta description, keywords, OG image, theme colour, geo tags |
+| `person` | Name, handle, pronouns, birthday (terminal `uptime`), location, email, avatar used for the voxel hero |
+| `accounts` | GitHub / LeetCode usernames and Discord user ID — every live feed reads these |
+| `github` | `featuredTopic` (tag repos with it to put them in the work reel), owners to exclude from "merged upstream", commit messages to hide |
+| `hero` | The tag line and blurb on the first screen |
+| `projects` | Curated work reel (used until a repo has the featured topic) and copy overrides for those repos |
+| `terminal` | About-section lines. Tokens `{uptime}` `{repos}` `{stars}` `{followers}` `{solved}` are filled live |
+| `timeline` | Journey entries (`type: work \| education`, `current: true` for present roles) — also feeds JSON-LD |
+| `signal` | Which live cards to show (`discord`, `leetcode`, `github`, `linkedin`) and the fallback Discord banner |
+| `linkedin` | The LinkedIn card (LinkedIn has no public API, so this is static) |
+| `contact`, `socials` | Contact headline and every social link |
+| `seo` | Long-form about text, expertise list, `knowsAbout`, open-source list, FAQ |
 
-- Vite 6, React 18, TypeScript
-- `wouter` for client-side routing (`/`, `/projects`)
-- Lanyard API (Discord presence) + LeetCode stats API
-- GitHub REST API via a server-side proxy (token never leaves the server)
-  - Dev: Vite middleware plugin in `vite.config.ts`
-  - Prod: Vercel Edge function at `api/gh/[...path].ts`
+Then swap the images in `public/`: `profile.svg` (hero avatar), `nobg.png` (favicon), `opengraph.jpg` (1200×630 link preview),
+`banner.png` (Discord banner fallback) and `logos/` (timeline icons).
+
+The five hand-drawn screens in the work reel (`src/cinema/screens.ts`) are tied to the original repo names; any other repo gets a
+generated screen from its name, description, language, stars and topics.
 
 ## Run
 
 ```bash
 npm install
-echo "GITHUB_TOKEN=ghp_xxx" > .env   # personal access token, repo:read scope
+echo "GITHUB_TOKEN=ghp_xxx" > .env        # classic token with NO scopes — only lifts the rate limit
 npm run dev
 ```
 
-Then open <http://localhost:5173>.
+Set the same variables wherever you host it.
 
-## Scripts
+## Live data
 
-- `npm run dev` — start Vite dev server with the GitHub proxy
-- `npm run build` — production build to `dist/public`
-- `npm run serve` — preview the built bundle
-- `npm run typecheck` — `tsc --noEmit`
+| Source | Used for |
+|---|---|
+| GitHub API (via `api/gh`) | Repos, stars, followers, languages, featured repos, latest commits, merged upstream PRs |
+| github-contributions-api | Contribution skyline, streaks, weekly counts |
+| LeetCode GraphQL (via `api/leetcode`) | Solved counts and rank |
+| Lanyard | Discord status, activity, Spotify, avatar, decoration, server tag |
+
+`api/gh` only proxies the handful of endpoints the site needs and forces `is:public` on searches, so the token can't leak private data.
 
 ## Structure
 
 ```
-src/
-  components/Portfolio.tsx   # main page (hero, about, live, projects, oss, skills, contact)
-  components/portfolio.css   # all cinematic styling
-  pages/Projects.tsx         # /projects — full GitHub archive with hover README previews
-  lib/github.ts              # GH types, README image extractor, language colors
-  lib/skills.ts              # skill list + icon URLs (devicon / simpleicons)
-  lib/seo.ts                 # per-route meta hook
-api/gh/[...path].ts          # Vercel Edge proxy for GitHub API
-vite.config.ts               # also hosts the dev-time GitHub proxy
+portfolio.config.json   # ← edit this
+src/cinema/             # the 3D site: engine, post-processing, scenes, cards, overlays
+src/pages/Projects.tsx  # /projects — full GitHub archive with README previews
+seo/generate.ts         # builds head tags, JSON-LD, crawler text, llms.txt, sitemap, robots from the config
+api/                    # serverless functions: GitHub proxy, LeetCode, Discord banner
+vite.config.ts          # dev versions of the api routes + the SEO plugin
 ```
 
-## Notes
+## Scripts
 
-- `GITHUB_TOKEN` is required (or you'll hit unauth'd GitHub rate limits). It is read server-side only.
-- Domain SEO is configured against `https://www.rishab.cv` — update `src/lib/seo.ts` and `index.html` if you fork.
+- `npm run dev` — dev server with the API routes
+- `npm run build` — production build to `dist/public`
+- `npm run serve` — preview the build
+- `npm run typecheck`

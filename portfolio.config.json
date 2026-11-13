@@ -1,0 +1,197 @@
+{
+  "site": {
+    "url": "https://www.rishab.cv",
+    "title": "Rishab Gautam — Software Developer, Entrepreneur & Co-Founder of Nept Cloud",
+    "description": "Rishab Gautam (rishabnotfound) — co-founder & technical lead at Nept Cloud, from Delhi, India. Builds cloud infrastructure, developer tools and open-source products: Layla (~470k subscribers across 150–200 sites), DeltaSys, MakimaKey, MongoSync, Syella, Commitify. Upstream in PreMiD and FMHY.",
+    "keywords": [
+      "Rishab Gautam", "Rishab", "rishabnotfound", "Rishab Delhi", "software developer", "entrepreneur", "co-founder",
+      "full-stack developer", "backend developer", "DevOps engineer", "reverse engineering", "applied cryptography",
+      "web scraping", "TypeScript", "React", "Lua", "HLS proxy", "Layla web push", "Syella terminal", "MakimaKey",
+      "DeltaSys", "MongoSync", "Commitify", "RezePlayer", "Maki HLS Proxy", "open source", "Delhi developer",
+      "Nept Cloud", "Nept.Cloud", "PreMiD", "FMHY", "IIT Madras", "Manipal University Jaipur", "Nept Host"
+    ],
+    "ogImage": "/opengraph.jpg",
+    "favicon": "/nobg.png",
+    "themeColor": "#000000",
+    "locale": "en_US",
+    "twitter": "@rishabnotfound",
+    "geo": { "region": "IN-DL", "placename": "Delhi", "lat": 28.6139, "lng": 77.209 }
+  },
+
+  "person": {
+    "name": "Rishab Gautam",
+    "givenName": "Rishab",
+    "familyName": "Gautam",
+    "handle": "rishabnotfound",
+    "pronouns": "He/Him",
+    "gender": "Male",
+    "born": "2007-01-22",
+    "location": "Greater Delhi Area, India",
+    "city": "Delhi",
+    "country": "IN",
+    "nationality": "India",
+    "languages": ["English", "Hindi"],
+    "email": "contact@rishab.cv",
+    "jobTitle": "Co-Founder & Technical Lead",
+    "avatar": "/profile.svg",
+    "summary": "Software developer and entrepreneur based in Delhi, India. Co-Founder & Technical Lead at Nept Cloud, building cloud infrastructure, developer tools and open-source products used by hundreds of thousands of people."
+  },
+
+  "accounts": {
+    "github": "rishabnotfound",
+    "leetcode": "rishabnotfound",
+    "discordId": "1141729666160402565"
+  },
+
+  "github": {
+    "featuredTopic": "featured",
+    "excludeUpstreamOwners": ["NEPT-CLOUD"],
+    "ignoreCommits": "^(bot[:(]|merge )"
+  },
+
+  "hero": {
+    "tag": "// PORTFOLIO",
+    "blurb": "Co-founder & technical lead at Nept Cloud — cloud infrastructure, developer tools and open-source products taken from zero to production"
+  },
+
+  "projects": [
+    {
+      "repo": "Layla", "homepage": "https://layla.wtf/",
+      "tag": "Web-push platform", "stack": "Next.js · Node · Redis · Service workers",
+      "desc": "Free web-push platform powering 150–200 sites. ~470k subscribers, 292.1k+ notifications delivered, built for millions of req/s."
+    },
+    {
+      "repo": "Syella",
+      "tag": "Cross-platform terminal", "stack": "Electron · SSH · xterm",
+      "desc": "Windows & macOS terminal that out-performs MobaXterm and Termius combined. Growing daily-user base."
+    },
+    {
+      "repo": "MakimaKey",
+      "tag": "Offline TOTP authenticator", "stack": "Kotlin · Android · E2E crypto",
+      "desc": "Fully-offline, end-to-end-encrypted TOTP authenticator running on 3–4k Android devices."
+    },
+    {
+      "repo": "DeltaSys",
+      "tag": "VPS control plane", "stack": "Next.js · WebSockets · SSH · xterm.js",
+      "desc": "MobaXterm reimagined in the browser — real-time VPS control with full SSH terminal emulation."
+    },
+    {
+      "repo": "Commitify",
+      "tag": "Contribution painter", "stack": "Next.js · Git · Scheduling · CLI",
+      "desc": "Paints your GitHub contribution graph with smart commit scheduling. Used by hundreds."
+    }
+  ],
+
+  "terminal": {
+    "title": "rishabnotfound: ~",
+    "lines": [
+      ["whoami", "rishab gautam · @rishabnotfound · greater delhi area, in"],
+      ["uptime", "{uptime}"],
+      ["cat role.txt", "co-founder & technical lead @ nept cloud · full-stack · cloud infra & dev tools"],
+      ["ls ~/edu", "iit-madras/bs-data-science/  manipal/bca/  apeejay/schooling"],
+      ["ls ~/craft", "cloud-infra/  reverse-engineering/  cryptography/  virtualization/  devops/  automation/  webgl/  ffmpeg/"],
+      ["cat stack.json", "{ lang: [ts, js, go, lua, python, c, php], web: [next, react, vue, vite, tailwind, webgl],\n  back: [node, express, go+gin, socket.io, jwt, rest], data: [mongo, postgres, redis, prisma, sql],\n  ops: [docker, nginx, linux, cloudflare, gh-actions], ships: [web, desktop/electron, android] }"],
+      ["echo $MOTTO", "code. break. repeat. ship."],
+      ["gh api user", "{repos} repos · {stars} stars · {followers} followers"]
+    ]
+  },
+
+  "timeline": [
+    { "type": "education", "when": "2022 — 23", "title": "Class X", "org": "Apeejay School, Panchsheel Park", "url": "https://www.apeejay.edu/panchsheel/", "note": "8.1 CGPA", "logo": "/logos/apeejay.jpg" },
+    { "type": "work", "when": "May 2023 - March 2025", "title": "Co-Owner", "org": "Nept Host", "note": "Ran a profitable VPS & VDS hosting business — servers, virtualization, ops, ~$100/day revenue", "logo": "/logos/nept.png" },
+    { "type": "education", "when": "2024 — 25", "title": "Class XII PCM", "org": "Apeejay School, Panchsheel Park", "url": "https://www.apeejay.edu/panchsheel/", "note": "7.7 CGPA", "logo": "/logos/apeejay.jpg" },
+    { "type": "work", "current": true, "when": "March 2025", "title": "Co-Founder & Tech Lead", "org": "Nept Cloud", "url": "https://nept.cloud", "note": "Cloud infrastructure & developer tools, from zero to production", "logo": "/logos/nept.png", "sameAs": ["https://www.linkedin.com/company/nept-cloud"] },
+    { "type": "education", "when": "August — October 2026", "title": "B.Tech CSE", "org": "IILM University, Gurugram", "url": "https://iilm.edu/gurugram/", "note": "Two months in, got bored — took a deep breath and withdrew", "logo": "/logos/iilm.jpg" },
+    { "type": "education", "current": true, "when": "2026 — 29", "title": "BCA", "org": "Manipal University Jaipur", "url": "https://jaipur.manipal.edu/", "note": "Computer applications", "logo": "/logos/manipal.jpg" },
+    { "type": "education", "current": true, "when": "Ongoing", "title": "BS Data Science", "org": "Indian Institute of Technology, Madras", "url": "https://study.iitm.ac.in/ds/", "note": "Data Science and Applications", "logo": "/logos/iitm.jpg" }
+  ],
+
+  "signal": {
+    "cards": ["discord", "leetcode", "github", "linkedin"],
+    "discordBanner": "/banner.png"
+  },
+
+  "linkedin": {
+    "url": "https://www.linkedin.com/in/rishabnotfound/",
+    "headline": "Co-Founder & Technical Lead @ NEPT CLOUD | Cloud Infrastructure & Developer Tools | Full-Stack Engineer | Building Products from Zero to Production",
+    "followers": 325,
+    "connections": 102,
+    "about": "Co-founder at NEPT CLOUD, building products around cloud infrastructure and developer tools. I enjoy solving complex technical problems, building things from scratch, and turning ideas into products people can actually use.",
+    "company": { "name": "NEPT CLOUD", "logo": "/logos/nept.png" },
+    "school": { "name": "Indian Institute of Technology, Madras", "logo": "/logos/iitm.jpg" },
+    "tagline": "Co-founder & tech lead @ Nept Cloud"
+  },
+
+  "contact": {
+    "headline": "Let's talk about\nyour next project",
+    "sub": "Drop a line and I'll reach out within 24hrs",
+    "form": "https://formsubmit.co/ajax/contact@rishab.cv"
+  },
+
+  "socials": [
+    { "label": "GitHub", "href": "https://github.com/rishabnotfound" },
+    { "label": "LinkedIn", "href": "https://www.linkedin.com/in/rishabnotfound/" },
+    { "label": "X", "href": "https://x.com/rishabnotfound" },
+    { "label": "Mail", "href": "mailto:contact@rishab.cv" },
+    { "label": "Discord", "href": "https://discord.com/users/1141729666160402565" },
+    { "label": "Instagram", "href": "https://instagram.com/rishabnotfound" },
+    { "label": "YouTube", "href": "https://youtube.com/@rishabnotfound" },
+    { "label": "LeetCode", "href": "https://leetcode.com/u/rishabnotfound/" },
+    { "label": "Codeforces", "href": "https://codeforces.com/profile/rishabnotfound" },
+    { "label": "TryHackMe", "href": "https://tryhackme.com/p/rishabnotfound" }
+  ],
+
+  "seo": {
+    "about": "Rishab works end-to-end across product, infrastructure, and low-level systems. Underneath his products he focuses on reverse-engineering closed protocols, applied cryptography, resilient scraping pipelines, and HLS streaming infrastructure.",
+    "extraProjects": [
+      { "name": "MongoSync", "url": "https://github.com/rishabnotfound/MongoSync", "desc": "Web-based MongoDB Compass alternative: multiple connections, CRUD, aggregation pipelines, collection stats, command palette, PWA." },
+      { "name": "RezePlayer", "url": "https://github.com/rishabnotfound/RezePlayer", "desc": "Standalone HLS/MP4 video engine with watch-party sync, Chromecast and automatic thumbnails." },
+      { "name": "Maki-HLS-Proxy", "url": "https://github.com/rishabnotfound/Maki-HLS-Proxy-LIGHTEST", "desc": "HLS proxy written in pure Lua + nginx." }
+    ],
+    "expertise": [
+      "Full-Stack Development · Software Development · Web Development · Back-End Web Development",
+      "Mobile Application Development · Desktop Application Development (Electron.js)",
+      "Languages: JavaScript, TypeScript, C, Python, Go, Lua, PHP",
+      "Frontend: React.js, Next.js, Vue.js, Vite, HTML5, CSS, Tailwind CSS",
+      "Backend: Node.js, REST APIs, Socket.io, Prisma ORM, JSON Web Token (JWT), Nginx",
+      "Databases: MongoDB, PostgreSQL, SQL, Database Management Systems (DBMS)",
+      "DevOps & Cloud: Docker, Linux, Git, GitHub, Cloud Infrastructure, CI/CD",
+      "Specialties: Cloud Infrastructure, Virtualization, Reverse Engineering, Cryptography, Automation, Web Scraping, HLS Streaming, FFmpeg, WebGL, Open-Source Software",
+      "Business: Early-Stage Ventures, Service Operations, Customer Support — co-owned and ran a profitable hosting business"
+    ],
+    "knowsAbout": [
+      "Full-Stack Development", "Software Development", "Web Development", "Back-End Web Development", "Mobile Application Development",
+      "Desktop Application Development", "JavaScript", "TypeScript", "React.js", "Next.js", "Node.js", "C (Programming Language)",
+      "Python (Programming Language)", "Electron.js", "MongoDB", "PostgreSQL", "SQL", "REST APIs", "Git", "GitHub", "Docker", "Linux",
+      "Cloud Infrastructure", "Virtualization", "DevOps", "Open-Source Software", "Database Management System (DBMS)", "Automation",
+      "Reverse Engineering", "Cryptography", "Go (Programming Language)", "Lua", "JSON Web Token (JWT)", "Vite", "PHP", "HTML5", "CSS",
+      "Tailwind CSS", "FFmpeg", "Nginx", "Vue.js", "Prisma ORM", "Socket.io", "WebGL", "HLS Streaming", "Web Scraping", "CI/CD"
+    ],
+    "openSource": [
+      { "label": "PreMiD Activities PR #9391", "url": "https://github.com/PreMiD/Activities/pull/9391", "desc": "Added a new presence integration for Discord Rich Presence." },
+      { "label": "FMHY PR #4094", "url": "https://github.com/fmhy/edit/pull/4094", "desc": "Added PWA support to the FreeMediaHeckYeah community project." }
+    ],
+    "faq": [
+      {
+        "q": "Who is Rishab?",
+        "a": "Rishab Gautam (rishabnotfound) is a software developer and entrepreneur from Delhi, India, born 22 January 2007. He is the Co-Founder and Technical Lead at Nept Cloud and ships production-grade infrastructure — including Layla, Syella, MakimaKey, DeltaSys, Commitify and the world's first Lua + nginx HLS proxy — used by hundreds of thousands of people. He contributes upstream to PreMiD and FMHY."
+      },
+      {
+        "q": "What does Rishab work on?",
+        "a": "Rishab builds production-grade developer infrastructure end-to-end: Layla (web-push platform serving ~470k subscribers across 150–200 sites), Syella (cross-platform terminal that competes with MobaXterm and Termius), MakimaKey (fully-offline encrypted Android TOTP authenticator), DeltaSys (browser-based VPS control plane), Commitify (GitHub contribution automation used by hundreds), MongoSync (MongoDB admin surface), RezePlayer (HLS/MP4 video engine), and Maki-HLS-Proxy (the world's first HLS proxy in Lua + nginx)."
+      },
+      {
+        "q": "Where is Rishab based?",
+        "a": "Rishab is based in Delhi, India. He is studying for a BS in Data Science and Applications at IIT Madras and a BCA at Manipal University Jaipur."
+      },
+      {
+        "q": "How can I contact Rishab?",
+        "a": "You can reach Rishab at contact@rishab.cv, or on GitHub, LinkedIn, X (Twitter), Instagram and Discord as @rishabnotfound."
+      },
+      {
+        "q": "What open-source projects has Rishab contributed to?",
+        "a": "Rishab has merged pull requests to PreMiD Activities and FMHY, including a Discord Rich Presence integration (PreMiD #9391) and PWA support (FMHY #4094)."
+      }
+    ]
+  }
+}

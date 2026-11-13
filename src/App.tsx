@@ -1,23 +1,12 @@
 import { Route, Switch } from "wouter";
-import Portfolio from "./components/Portfolio";
+import Cinema from "./cinema/Cinema";
 import ProjectsPage from "./pages/Projects";
-import { ShaderBackground } from "./components/ShaderBackground";
 
-function App() {
+export default function App() {
   return (
-    <>
-      <div className="pf-app-shader" aria-hidden="true">
-        <ShaderBackground color1="#000000" color2="#1a1a1f" speed={0.6} />
-      </div>
-      <Switch>
-        <Route path="/projects" component={ProjectsPage} />
-        <Route path="/about" component={Portfolio} />
-        <Route path="/rishab-gautam" component={Portfolio} />
-        <Route path="/" component={Portfolio} />
-        <Route component={Portfolio} />
-      </Switch>
-    </>
+    <Switch>
+      <Route path="/projects" component={ProjectsPage} />
+      <Route component={Cinema} />
+    </Switch>
   );
 }
-
-export default App;

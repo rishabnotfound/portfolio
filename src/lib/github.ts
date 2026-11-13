@@ -1,4 +1,6 @@
-export const GH_USER = "rishabnotfound";
+import { config } from "../config";
+
+export const GH_USER = config.accounts.github;
 
 export type Repo = {
   id: number;

@@ -3,6 +3,9 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import { proxyGithub } from "./api/_github";
+import { config as portfolio } from "./src/config";
+import { headTags, crawlerFallback, llmsTxt, sitemapXml, robotsTxt } from "./seo/generate";
 
 const env = loadEnv("development", process.cwd(), "");
 const port = Number(process.env.PORT ?? 5173);
@@ -12,21 +15,12 @@ const githubToken = env.GITHUB_TOKEN || process.env.GITHUB_TOKEN || "";
 function githubProxyPlugin(): Plugin {
   const handler: Connect.NextHandleFunction = async (req, res, next) => {
     if (!req.url || !req.url.startsWith("/api/gh/")) return next();
-    const upstream = "https://api.github.com/" + req.url.slice("/api/gh/".length);
-    const headers: Record<string, string> = {
-      "Accept": req.headers["accept"]?.toString() || "application/vnd.github+json",
-      "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36",
-      "X-GitHub-Api-Version": "2022-11-28",
-    };
-    if (githubToken) headers["Authorization"] = `Bearer ${githubToken}`;
     try {
-      const upstreamRes = await fetch(upstream, { headers });
-      const buf = Buffer.from(await upstreamRes.arrayBuffer());
-      res.statusCode = upstreamRes.status;
-      const ct = upstreamRes.headers.get("content-type");
-      if (ct) res.setHeader("Content-Type", ct);
+      const r = await proxyGithub(req.url.slice("/api/gh/".length), req.headers["accept"]?.toString(), githubToken);
+      res.statusCode = r.status;
+      res.setHeader("Content-Type", r.contentType);
       res.setHeader("Cache-Control", "public, max-age=300");
-      res.end(buf);
+      res.end(r.body);
     } catch (err) {
       res.statusCode = 502;
       res.setHeader("Content-Type", "application/json");
@@ -37,6 +31,29 @@ function githubProxyPlugin(): Plugin {
     name: "github-proxy",
     configureServer(server: ViteDevServer) { server.middlewares.use(handler); },
     configurePreviewServer(server: PreviewServer) { server.middlewares.use(handler); },
+  };
+}
+
+function seoPlugin(): Plugin {
+  const files: Record<string, [string, () => string]> = {
+    "/llms.txt": ["text/plain; charset=utf-8", () => llmsTxt(portfolio)],
+    "/sitemap.xml": ["application/xml; charset=utf-8", () => sitemapXml(portfolio)],
+    "/robots.txt": ["text/plain; charset=utf-8", () => robotsTxt(portfolio)],
+  };
+  const serve: Connect.NextHandleFunction = (req, res, next) => {
+    const f = files[req.url?.split("?")[0] ?? ""];
+    if (!f) return next();
+    res.setHeader("Content-Type", f[0]);
+    res.end(f[1]());
+  };
+  return {
+    name: "portfolio-seo",
+    transformIndexHtml: (html) => html.replace("<!--seo:head-->", headTags(portfolio)).replace("<!--seo:body-->", crawlerFallback(portfolio)),
+    configureServer(server: ViteDevServer) { server.middlewares.use(serve); },
+    configurePreviewServer(server: PreviewServer) { server.middlewares.use(serve); },
+    generateBundle() {
+      for (const [path, [, make]] of Object.entries(files)) this.emitFile({ type: "asset", fileName: path.slice(1), source: make() });
+    },
   };
 }
 
@@ -126,6 +143,7 @@ export default defineConfig({
     tailwindcss(),
     runtimeErrorOverlay(),
     githubProxyPlugin(),
+    seoPlugin(),
     leetcodeProxyPlugin(),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
