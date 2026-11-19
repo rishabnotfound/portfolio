@@ -45,45 +45,17 @@ vec3 toSRGB(vec3 c) { c = clamp(c, 0., 1.); return mix(c * 12.92, 1.055 * pow(c,
 
 void main() {
   vec2 uv = vUv;
-  vec2 cc = uv - 0.5;
-  float r2 = dot(cc, cc);
-  uv = 0.5 + cc * (1.0 + uBarrel * r2) / (1.0 + uBarrel * 0.25);
-
-  float t = uTime;
   float g = uGlitch;
-  float band = 0.0;
-  for (int k = 0; k < 3; k++) {
-    float fk = float(k);
-    float y0 = fract(t * (0.05 + fk * 0.031) + fk * 0.37);
-    float w = 0.012 + 0.03 * noise(t * 0.7 + fk * 3.1);
-    float m = smoothstep(w, 0.0, abs(uv.y - y0));
-    band += m * (0.25 + 0.75 * step(0.6, noise(t * 1.3 + fk * 7.0)));
-  }
-  float jitter = (hash(vec2(floor(uv.y * uRes.y / 2.0), floor(t * 30.0))) - 0.5);
-  float amp = 0.0025 + 0.03 * g;
-  uv.x += band * jitter * amp * 4.0 + jitter * 0.0006 * (1.0 + 8.0 * g);
-  float tear = step(0.92 - 0.25 * g, hash(vec2(floor(uv.y * 24.0), floor(t * 12.0)))) * g;
-  uv.x += tear * (hash(vec2(floor(uv.y * 24.0), floor(t * 12.0) + 3.0)) - 0.5) * 0.12;
-
-  vec2 dir = (uv - 0.5) * (0.004 + 0.012 * g + 0.01 * band);
+  float jitter = (hash(vec2(floor(uv.y * uRes.y / 2.0), floor(uTime * 30.0))) - 0.5);
+  uv.x += jitter * (0.0012 + 0.016 * g);
+  float tear = step(0.92 - 0.25 * g, hash(vec2(floor(uv.y * 24.0), floor(uTime * 12.0)))) * g;
+  uv.x += tear * (hash(vec2(floor(uv.y * 24.0), floor(uTime * 12.0) + 3.0)) - 0.5) * 0.12;
+  vec2 dir = (uv - 0.5) * (0.004 + 0.012 * g);
   vec3 col;
   col.r = scene(uv + dir).r;
   col.g = scene(uv).g;
   col.b = scene(uv - dir).b;
-
   col = toSRGB(col);
-  col += band * 0.06;
-  float scan = 0.94 + 0.06 * sin(vUv.y * uRes.y * 1.6);
-  col *= scan;
-  float gr = hash(vUv * uRes + fract(t) * 91.7) - 0.5;
-  col += gr * 0.07;
-  vec2 dp = vec2(floor(vUv.y * uRes.y / 2.0), floor(t * 14.0));
-  float drop = step(0.9985 - 0.004 * g, hash(dp));
-  float dx = hash(dp + 1.7);
-  drop *= step(dx, vUv.x) * step(vUv.x, dx + 0.015 + 0.05 * hash(dp + 4.2));
-  col = mix(col, vec3(0.95), drop * 0.85);
-  float vig = smoothstep(0.95, 0.25, length((vUv - 0.5) * vec2(1.0, 1.15)));
-  col *= mix(0.55, 1.0, vig);
   gl_FragColor = vec4(col, 1.0);
 }
 `;

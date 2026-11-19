@@ -35,6 +35,8 @@ export type Live = {
   langs?: { name: string; count: number }[];
   repos?: number; stars?: number; followers?: number; solved?: number;
   commits?: Commit[];
+  rhythm?: { hours: number[]; days: number[]; grid: number[][]; sample: number; first: string };
+  stack?: { name: string; bytes: number; repos: string[] }[];
   prs?: PR[];
   days?: Day[];
   contribTotal?: number;
@@ -114,14 +116,31 @@ export function startLive() {
       set({ prs: d.items.map((i) => ({ repo: i.repository_url.split("/repos/")[1], number: i.number, title: i.title, date: i.closed_at, url: i.html_url })) }))
     .catch(() => {});
 
-  gh(`search/commits?q=${q(`author:${GH_USER} is:public`)}&sort=author-date&order=desc&per_page=50`)
-    .then((d: { items: { repository: { full_name: string }; commit: { message: string; author: { date: string } }; html_url: string }[] }) =>
-      set({
-        commits: d.items
-          .map((i) => ({ repo: i.repository.full_name, msg: i.commit.message.split("\n")[0], date: i.commit.author.date, url: i.html_url }))
-          .filter((c) => !new RegExp(config.github.ignoreCommits, "i").test(c.msg))
-          .slice(0, 12),
-      }))
+  type SearchCommit = { repository: { full_name: string }; commit: { message: string; author: { date: string } }; html_url: string };
+  Promise.all([1, 2, 3].map((page) =>
+    gh(`search/commits?q=${q(`author:${GH_USER} user:${GH_USER} ${config.github.rhythmExcludeRepos.map((r) => `-repo:${GH_USER}/${r}`).join(" ")} is:public`)}&sort=author-date&order=desc&per_page=100&page=${page}`)
+      .then((d: { items: SearchCommit[] }) => d.items).catch(() => [] as SearchCommit[])))
+    .then((pages) => {
+      const ignore = new RegExp(config.github.ignoreCommits, "i");
+      const all = pages.flat()
+        .map((i) => ({ repo: i.repository.full_name, msg: i.commit.message.split("\n")[0], date: i.commit.author.date, url: i.html_url }))
+        .filter((c) => !ignore.test(c.msg));
+      if (!all.length) return;
+      const tz = config.person.timezone;
+      const hourOf = new Intl.DateTimeFormat("en-GB", { timeZone: tz, hour: "numeric", hourCycle: "h23" });
+      const dayOf = new Intl.DateTimeFormat("en-GB", { timeZone: tz, weekday: "short" });
+      const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+      const hours = Array(24).fill(0), days = Array(7).fill(0), grid = Array.from({ length: 7 }, () => Array(24).fill(0));
+      all.forEach((c) => {
+        const d = new Date(c.date);
+        const h = Number(hourOf.format(d)) % 24, w = DAYS.indexOf(dayOf.format(d));
+        hours[h]++; days[w]++; grid[w][h]++;
+      });
+      set({ commits: all.slice(0, 12), rhythm: { hours, days, grid, sample: all.length, first: all[all.length - 1].date } });
+    });
+
+  gh(`users/${GH_USER}/languages`)
+    .then((d: { languages: { name: string; bytes: number; repos: string[] }[] }) => set({ stack: d.languages }))
     .catch(() => {});
 
   fetch(`https://github-contributions-api.jogruber.de/v4/${GH_USER}?y=last`).then((r) => r.json())

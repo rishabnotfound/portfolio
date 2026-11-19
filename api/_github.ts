@@ -25,6 +25,26 @@ export async function proxyGithub(pathAndQuery: string, accept: string | undefin
 
   if (path === `users/${OWNER}` || path === `users/${OWNER}/repos`) return get(url);
 
+  if (path === `users/${OWNER}/languages`) {
+    const list = await get(`https://api.github.com/users/${OWNER}/repos?per_page=100&type=owner`);
+    if (list.status !== 200) return list;
+    const repos = (JSON.parse(list.body.toString()) as { name: string; fork: boolean; private: boolean }[]).filter((r) => !r.fork && !r.private);
+    const per = await Promise.all(repos.map(async (r) => {
+      const res = await get(`https://api.github.com/repos/${OWNER}/${r.name}/languages`);
+      return { repo: r.name, langs: res.status === 200 ? (JSON.parse(res.body.toString()) as Record<string, number>) : {} };
+    }));
+    const totals = new Map<string, { bytes: number; repos: { name: string; bytes: number }[] }>();
+    for (const { repo, langs } of per) for (const [name, bytes] of Object.entries(langs)) {
+      const t = totals.get(name) ?? { bytes: 0, repos: [] };
+      t.bytes += bytes;
+      t.repos.push({ name: repo, bytes });
+      totals.set(name, t);
+    }
+    const languages = [...totals].map(([name, t]) => ({ name, bytes: t.bytes, repos: t.repos.sort((a, b) => b.bytes - a.bytes).map((r) => r.name) }))
+      .sort((a, b) => b.bytes - a.bytes);
+    return json(200, { languages, repos: repos.length });
+  }
+
   if (/^search\/(repositories|issues|commits)$/.test(path)) {
     url.searchParams.set("q", `${url.searchParams.get("q") ?? ""} is:public`.trim());
     return get(url);

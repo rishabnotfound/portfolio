@@ -1,15 +1,15 @@
-export type ChapterKey = "hero" | "work" | "about" | "commits" | "journey" | "signal" | "contact";
+export type ChapterKey = "hero" | "work" | "about" | "stack" | "commits" | "hours" | "journey" | "signal" | "contact";
 
-export const ORDER: ChapterKey[] = ["hero", "work", "about", "commits", "journey", "signal", "contact"];
+export const ORDER: ChapterKey[] = ["hero", "work", "about", "stack", "commits", "hours", "journey", "signal", "contact"];
 
 export const TRANSITION = 0.75;
 
 export type Located = { i: number; lp: number; t: number };
 export type Timeline = ReturnType<typeof buildTimeline>;
 
-export function buildTimeline(projects: number) {
+export function buildTimeline(projects: number, langs = 6) {
   const lens: Record<ChapterKey, number> = {
-    hero: 1.4, work: 1.3 * projects, about: 3, commits: 3.2, journey: 3.4, signal: 3.6, contact: 1.8,
+    hero: 1.4, work: 1.3 * projects, about: 3, stack: 1.2 + 0.42 * Math.max(6, langs), commits: 3.2, hours: 1.8, journey: 6.5, signal: 3.6, contact: 1.8,
   };
   const chapters = ORDER.map((key) => ({ key, len: lens[key] }));
   const starts = chapters.reduce<number[]>((a, c, i) => (a.push(i ? a[i - 1] + chapters[i - 1].len : 0), a), []);

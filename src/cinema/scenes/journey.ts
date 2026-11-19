@@ -79,7 +79,7 @@ export function createJourney(ctx: Ctx): Chapter {
     update(lp, time, _dt, mouse) {
       const y = -22 + lp * 48;
       camera.position.set(mouse.x * 0.3, y, mouse.y * 0.3);
-      const tip = Math.min(1, Math.max(0, (lp - 0.55) / 0.45));
+      const tip = Math.min(1, Math.max(0, (lp - 0.64) / 0.36));
       look.set(Math.sin(tip * 1.2) * 4, y + 10 * (1 - tip) + 1.5, -10 * tip - 0.01);
       camera.up.set(Math.sin(-0.35 - lp * 1.4), 0, Math.cos(-0.35 - lp * 1.4)).normalize();
       camera.lookAt(look);

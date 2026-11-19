@@ -13,18 +13,8 @@ void main(){
   vec2 p = vUv - 0.5;
   float d = sdRoundBox(p * vec2(uAspect, 1.0), vec2(0.5 * uAspect, 0.5), 0.06);
   if (d > 0.0) discard;
-  vec2 uv = vUv;
-  float row = floor(uv.y * 90.0);
-  float g = uGlitch * step(0.75, hash(vec2(row, floor(uTime * 20.0))));
-  uv.x += g * (hash(vec2(row, floor(uTime * 20.0) + 1.0)) - 0.5) * 0.15;
-  vec3 c = texture2D(map, uv).rgb;
-  float lum = dot(c, vec3(0.299, 0.587, 0.114));
-  c = mix(vec3(lum), c, 0.35 + 0.65 * uFocus);
-  c *= 0.97 + 0.03 * sin(vUv.y * 900.0);
-  float edge = smoothstep(-0.05, 0.0, d);
-  c *= 1.0 - edge * 0.6;
-  c += pow(max(0.0, 1.0 - length(p - vec2(-0.18, 0.22)) * 2.2), 3.0) * 0.12;
-  gl_FragColor = vec4(c, 1.0);
+  vec3 c = texture2D(map, vUv).rgb;
+    gl_FragColor = vec4(c, 1.0);
 }`;
 
 export function crtGeometry(w = 1.6, h = 1.0) {

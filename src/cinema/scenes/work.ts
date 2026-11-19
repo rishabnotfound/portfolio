@@ -90,7 +90,7 @@ export function createWork(ctx: Ctx, projects: Project[]): Chapter {
         const dist = Math.abs(i - f);
         s.u.uFocus.value = Math.max(0, 1 - dist * 1.4);
         s.u.uTime.value = time;
-        s.u.uGlitch.value = Math.min(1, Math.abs(dist - Math.round(dist)) * 3) * (dist < 1.2 ? 1 : 0);
+        s.u.uGlitch.value = 0;
         if (redraw && dist < 1.3) s.st.draw(time);
       });
     },

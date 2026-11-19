@@ -15,7 +15,7 @@ serverless functions and all SEO output (meta tags, JSON-LD, crawler text, `llms
 | `person` | Name, handle, pronouns, birthday (terminal `uptime`), location, email, avatar used for the voxel hero |
 | `accounts` | GitHub / LeetCode usernames and Discord user ID — every live feed reads these |
 | `github` | `featuredTopic` (tag repos with it to put them in the work reel), owners to exclude from "merged upstream", commit messages to hide |
-| `hero` | The tag line and blurb on the first screen |
+| `hero` | The blurb on the first screen |
 | `projects` | Curated work reel (used until a repo has the featured topic) and copy overrides for those repos |
 | `terminal` | About-section lines. Tokens `{uptime}` `{repos}` `{stars}` `{followers}` `{solved}` are filled live |
 | `timeline` | Journey entries (`type: work \| education`, `current: true` for present roles) — also feeds JSON-LD |

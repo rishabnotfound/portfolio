@@ -105,7 +105,7 @@ export function createSignal(ctx: Ctx): Chapter {
         const focus = zoom < 0.5 ? 1 : Math.max(0, 1 - Math.abs(i - k) * 1.5);
         c.uniforms.uFocus.value = 0.35 + 0.65 * focus;
         c.uniforms.uTime.value = time;
-        c.uniforms.uGlitch.value = zoom > 0.5 ? Math.min(1, Math.abs(k - Math.round(k)) * 3) : 0;
+        c.uniforms.uGlitch.value = 0;
         c.glowU.uAmt.value = 0.12 + 0.35 * focus;
       });
       if (time - lastPaint > 0.25 || active !== lastActive) {
